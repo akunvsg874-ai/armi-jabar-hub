@@ -249,7 +249,7 @@ function Index() {
           <ProgramCard
             n="02"
             icon={Network}
-            title="Jaringan & Sub-Driver"
+            title={<>Jaringan &amp; <span className="whitespace-nowrap">Sub-Driver</span></>}
             tag="Kolaborasi Operasional"
             desc="Memperkuat koneksi antaranggota dan mendukung kolaborasi operasional dalam ekosistem usaha rental mobil."
             img={heroImg}
@@ -260,7 +260,6 @@ function Index() {
             title="Legalitas & Kemitraan"
             tag="Profesionalitas Usaha"
             desc="Mendorong profesionalitas usaha dan membuka ruang kolaborasi dengan mitra yang relevan."
-            tone="green"
           />
         </div>
       </section>
