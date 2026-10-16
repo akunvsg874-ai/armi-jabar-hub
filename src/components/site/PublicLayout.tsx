@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
+import logoDpd from "@/assets/logo-dpd-jabar.png.asset.json";
+import logoArmi from "@/assets/logo-armi.png.asset.json";
+
+export { logoArmi, logoDpd };
 
 const NAV = [
   { to: "/", label: "Beranda" },
@@ -10,14 +14,10 @@ const NAV = [
   { to: "/kontak", label: "Kontak" },
 ] as const;
 
-/** Temporary logo mark — replace with the official ARMI asset when available. */
+/** Official ARMI DPD Jawa Barat logo. */
 export function LogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const cls = { sm: "h-8 w-8 text-sm", md: "h-10 w-10 text-base", lg: "h-16 w-16 text-2xl" }[size];
-  return (
-    <span className={`inline-flex ${cls} shrink-0 items-center justify-center rounded-md bg-primary font-extrabold tracking-tight text-primary-foreground`} aria-hidden>
-      A
-    </span>
-  );
+  const cls = { sm: "h-8 w-8", md: "h-11 w-11", lg: "h-24 w-24" }[size];
+  return <img src={logoDpd.url} alt="Logo ARMI DPD Jawa Barat" width={507} height={492} className={`${cls} shrink-0 object-contain`} />;
 }
 
 export function Brand({ sub = true }: { sub?: boolean }) {
@@ -59,7 +59,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           <div className="hidden items-center gap-4 lg:flex">
             <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">Masuk</Link>
             <Link to="/kontak" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark">
-              Gabung Anggota
+              Gabung ARMI
             </Link>
           </div>
           <button className="rounded-md p-2 lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Tutup menu" : "Buka menu"} aria-expanded={open}>
@@ -75,7 +75,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
               </Link>
             ))}
             <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Masuk Portal</Link>
-            <Link to="/kontak" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung Anggota</Link>
+            <Link to="/kontak" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
           </nav>
         )}
       </header>
