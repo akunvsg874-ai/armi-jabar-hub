@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { PublicLayout, PageHeading } from "@/components/site/PublicLayout";
 import { KegiatanCard, EmptyState } from "@/components/site/shared";
-import { kegiatanQuery } from "./index";
+import { kegiatanQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/info-kegiatan")({
   head: () => ({

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, UserPlus } from "lucide-react";
 import { PublicLayout } from "@/components/site/PublicLayout";
 import { KegiatanCard, ProgramCards, EmptyState } from "@/components/site/shared";
-import { supabase } from "@/integrations/supabase/client";
+import { kegiatanQuery } from "@/lib/queries";
 import { LOGO_URL } from "@/lib/armi";
 import heroImg from "@/assets/hero-cars.jpg";
 
@@ -18,15 +18,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-export const kegiatanQuery = {
-  queryKey: ["kegiatan"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("kegiatan").select("*").order("tanggal", { ascending: false });
-    if (error) throw error;
-    return data;
-  },
-};
 
 const STATS = [
   { v: "27", l: "Kabupaten/Kota" },
