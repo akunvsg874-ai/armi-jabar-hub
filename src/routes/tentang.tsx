@@ -33,7 +33,7 @@ function Page() {
       <section className="bg-ivory text-ink">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-2 lg:items-center">
           <div>
-            <h2 className="accent-bar text-3xl font-extrabold tracking-tight md:text-4xl">Siapa Kami</h2>
+            <h2 className="accent-bar text-3xl font-bold uppercase md:text-4xl">Siapa Kami</h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
               ARMI (Anggota Rental Mobil Indonesia) DPD Jawa Barat menghubungkan pengusaha rental mobil untuk saling melindungi, berbagi informasi, dan tumbuh bersama sebagai pelaku usaha yang profesional.
             </p>
@@ -67,7 +67,7 @@ function Page() {
 
       <section className="border-t border-border bg-card py-20">
         <div className="mx-auto max-w-7xl px-5">
-          <h2 className="accent-bar mb-10 text-3xl font-extrabold tracking-tight md:text-4xl">Program Utama</h2>
+          <h2 className="accent-bar mb-10 text-3xl font-bold uppercase md:text-4xl">Program Utama</h2>
           <ProgramCards />
           <div className="mt-12">
             <Link to="/kontak" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-dark">Informasi Keanggotaan</Link>

@@ -10,7 +10,7 @@ export function PageTitle({ title, desc, action }: { title: string; desc?: strin
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-bold uppercase md:text-3xl">{title}</h1>
         {desc && <p className="text-sm text-muted-foreground">{desc}</p>}
       </div>
       {action}
@@ -25,7 +25,7 @@ export function StatCard({ label, value, icon, tone = "primary" }: { label: stri
       <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-muted-foreground">
         {label}<span className={toneCls}>{icon}</span>
       </div>
-      <div className={`mt-2 text-3xl font-extrabold tracking-tight ${toneCls}`}>{value}</div>
+      <div className={`mt-2 font-display text-3xl font-bold ${toneCls}`}>{value}</div>
     </div>
   );
 }
@@ -44,7 +44,7 @@ export function Modal({ open, onOpenChange, title, children }: { open: boolean; 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-card">
-        <DialogHeader><DialogTitle className="font-display text-2xl font-extrabold tracking-tight">{title}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="font-display text-2xl font-bold uppercase">{title}</DialogTitle></DialogHeader>
         {children}
       </DialogContent>
     </Dialog>
