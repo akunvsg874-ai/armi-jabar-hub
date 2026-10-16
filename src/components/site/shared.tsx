@@ -16,21 +16,30 @@ export function StatusBadge({ status }: { status: "aktif" | "non_aktif" }) {
   );
 }
 
-export function KegiatanCard({ k, actions }: { k: Kegiatan; actions?: React.ReactNode }) {
+export function KegiatanCard({ k, actions, onView }: { k: Kegiatan; actions?: React.ReactNode; onView?: () => void }) {
   return (
     <article className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary">
-      <div className="relative overflow-hidden">
+      <div className={`relative overflow-hidden ${onView ? "cursor-pointer" : ""}`} onClick={onView}>
         <img src={k.foto} alt={k.judul} loading="lazy" width={600} height={400} className="aspect-[3/2] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         <div className="absolute left-3 top-3"><JenisBadge jenis={k.jenis} /></div>
       </div>
       <div className="space-y-2 p-5">
-        <h3 className="text-lg font-bold leading-snug">{k.judul}</h3>
+        <h3 className={`text-lg font-bold leading-snug ${onView ? "cursor-pointer hover:text-primary" : ""}`} onClick={onView}>{k.judul}</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-primary" />{formatTanggal(k.tanggal)}</span>
+          <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-primary" />{formatTanggal(k.tanggal)}{k.waktu ? ` · ${k.waktu}` : ""}</span>
           <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-primary" />{k.lokasi}</span>
         </div>
         <p className="line-clamp-3 text-sm text-muted-foreground">{k.deskripsi}</p>
-        {actions && <div className="flex gap-2 pt-2">{actions}</div>}
+        {(onView || actions) && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {onView && (
+              <button type="button" onClick={onView} className="inline-flex items-center gap-1 rounded-md border border-primary px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground">
+                Lihat Detail →
+              </button>
+            )}
+            {actions}
+          </div>
+        )}
       </div>
     </article>
   );
