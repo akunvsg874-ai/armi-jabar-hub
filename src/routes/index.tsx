@@ -69,6 +69,10 @@ function Index() {
     <PublicLayout overlay>
       {/* HERO */}
       <section className="relative overflow-hidden">
+        {h.hero_image && (<>
+          <img src={h.hero_image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background" />
+        </>)}
         <div aria-hidden className="absolute inset-0 bg-radial-glow" />
         <img src={logoArmi.url} alt="" aria-hidden width={431} height={461} className="pointer-events-none absolute left-1/2 top-24 w-[720px] max-w-[95vw] -translate-x-1/2 opacity-[0.05] grayscale" />
         <div className="relative mx-auto max-w-5xl px-5 pb-20 pt-36 text-center md:pb-28 md:pt-44">
