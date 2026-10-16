@@ -25,7 +25,7 @@ export function Brand({ sub = true }: { sub?: boolean }) {
     <span className="flex items-center gap-3">
       <LogoMark />
       <span className="leading-tight">
-        <span className="block text-base font-extrabold tracking-tight">ARMI DPD JABAR</span>
+        <span className="block font-display text-xl font-bold leading-none">ARMI <span className="text-sm">DPD JABAR</span></span>
         {sub && <span className="block text-[11px] text-muted-foreground">Anggota Rental Mobil Indonesia</span>}
       </span>
     </span>
@@ -87,7 +87,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
               Anggota Rental Mobil Indonesia — Dewan Pimpinan Daerah Jawa Barat.
             </p>
-            <p className="mt-3 text-sm font-semibold text-primary">Tri Arutala — Kebersamaan, Keamanan, Professionalitas</p>
+            <p className="mt-3 font-script text-lg text-primary">Tri Arutala — Kebersamaan, Keamanan, Professionalitas</p>
           </div>
           <div>
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Navigasi</h3>
@@ -115,8 +115,8 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
 export function PageHeading({ eyebrow, title, desc }: { eyebrow: string; title: string; desc?: string }) {
   return (
     <div className="mb-10 max-w-3xl">
-      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
-      <h1 className="mt-3 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-5xl">{title}</h1>
+      <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80"><span className="text-primary">— </span>{eyebrow}</span>
+      <h1 className="mt-3 text-4xl font-bold uppercase leading-[0.95] md:text-5xl">{title}</h1>
       {desc && <p className="mt-3 text-base text-muted-foreground">{desc}</p>}
     </div>
   );
@@ -128,8 +128,9 @@ export function PageHero({ image, eyebrow, title, desc }: { image: string; eyebr
       <img src={image} alt="" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover opacity-40" />
       <div className="absolute inset-0 bg-hero-overlay" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-6xl">{title}</h1>
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80"><span className="text-primary">— </span>{eyebrow}</span>
+        <h1 className="mt-3 max-w-3xl text-4xl font-bold uppercase leading-[0.95] md:text-6xl">{title}</h1>
+        <div aria-hidden className="mt-3 h-1.5 w-24 -skew-x-12 bg-primary" />
         {desc && <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">{desc}</p>}
       </div>
     </section>
