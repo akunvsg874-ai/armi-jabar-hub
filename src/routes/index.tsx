@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { KegiatanDetail } from "@/components/site/KegiatanDetail";
 import { Lightbox } from "@/components/site/Lightbox";
 import type { Kegiatan } from "@/components/site/shared";
-import { ArrowRight, MapPin, Search, Shield, Network, Scale, Users } from "lucide-react";
+import { ArrowRight, MapPin, Search, Shield, Network, Scale, Users, type LucideIcon } from "lucide-react";
 import { PublicLayout, logoArmi, logoDpd } from "@/components/site/PublicLayout";
 import { JenisBadge, StatusBadge } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";
@@ -35,6 +35,43 @@ function Label({ children, light, n }: { children: string; light?: boolean; n?: 
 const H2 = "mt-3 text-4xl font-black uppercase leading-[0.95] tracking-wide md:text-[52px]";
 const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark";
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
+
+/** Program card: numbered watermark, icon tile that fills on hover, accent rule that grows. */
+function ProgramCard({ n, icon: Icon, title, desc, tag, img }: {
+  n: string;
+  icon: LucideIcon;
+  title: ReactNode;
+  desc: string;
+  tag: string;
+  img?: string;
+}) {
+  return (
+    <article className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-xl border border-border bg-card/50 p-8 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-glow">
+      {img && (
+        <>
+          <img src={img} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-[0.09] transition-opacity duration-700 group-hover:opacity-25" />
+          <div aria-hidden className="absolute inset-0 bg-background/65" />
+        </>
+      )}
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:repeating-linear-gradient(-45deg,var(--foreground)_0_1px,transparent_1px_10px)]" />
+      <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary/20 opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
+      <span aria-hidden className="pointer-events-none absolute -top-9 right-1 select-none font-display text-[128px] font-black leading-none text-foreground/[0.05] transition-colors duration-700 group-hover:text-primary/[0.12]">{n}</span>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-gradient-to-r from-primary/80 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+
+      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-lg border border-border bg-background/80 text-primary transition-all duration-500 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-glow">
+        <Icon className="h-7 w-7" />
+      </span>
+
+      <h3 className="relative mt-9 text-2xl font-black uppercase leading-[1.05] tracking-wide">{title}</h3>
+      <p className="relative mt-3 text-[15px] leading-relaxed text-foreground/70">{desc}</p>
+
+      <div className="relative mt-auto pt-8">
+        <span className="block h-[2px] w-full origin-left scale-x-[0.16] bg-gradient-to-r from-primary/80 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+        <span className="mt-4 block text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">{tag}</span>
+      </div>
+    </article>
+  );
+}
 
 /** Hero background: wide photos fill the area; small/square images (e.g. logos) become an elegant centered emblem. */
 /** Default hero backdrop: ARMI + DPD Jabar logos side by side as a soft watermark.
@@ -201,29 +238,29 @@ function Index() {
       <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
         <Label n="02">Apa yang Kami Bangun</Label>
         <h2 className={H2}><span className="bar-mark" />Bertumbuh Lebih Kuat, <span className="text-primary">Bersama.</span></h2>
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          <div className="relative overflow-hidden rounded-md border border-border bg-card p-8">
-            <div aria-hidden className="absolute -right-10 -top-10 h-40 w-40 rounded-full border-[14px] border-primary/15" />
-            <div aria-hidden className="absolute -right-2 -top-2 h-24 w-24 rounded-full border-4 border-primary/25" />
-            <Shield className="h-8 w-8 text-primary" />
-            <h3 className="mt-16 text-2xl font-bold uppercase leading-tight">Keamanan & Pandawa Korlap</h3>
-            <p className="mt-3 text-[15px] text-muted-foreground">Mendorong koordinasi dan kerja sama antaranggota untuk mendukung keamanan serta respons komunitas sesuai mekanisme organisasi.</p>
-          </div>
-          <div className="group relative min-h-[360px] overflow-hidden rounded-md">
-            <img src={heroImg} alt="Armada anggota" loading="lazy" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-bottom-fade" />
-            <div className="absolute inset-0 bg-background/40" />
-            <div className="relative flex h-full flex-col justify-end p-8">
-              <Network className="h-8 w-8 text-primary" />
-              <h3 className="mt-4 text-2xl font-bold uppercase leading-tight">Jaringan & Sub-Driver</h3>
-              <p className="mt-3 text-[15px] text-foreground/80">Memperkuat koneksi antaranggota dan mendukung kolaborasi operasional dalam ekosistem usaha rental mobil.</p>
-            </div>
-          </div>
-          <div className="rounded-md border-t-4 border-armi-green bg-ivory p-8 text-ink">
-            <Scale className="h-8 w-8 text-armi-green" />
-            <h3 className="mt-16 text-2xl font-bold uppercase leading-tight">Legalitas & Kemitraan</h3>
-            <p className="mt-3 text-[15px] text-ink-muted">Mendorong profesionalitas usaha dan membuka ruang kolaborasi dengan mitra yang relevan.</p>
-          </div>
+        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <ProgramCard
+            n="01"
+            icon={Shield}
+            title="Keamanan & Pandawa Korlap"
+            tag="Koordinasi & Respons"
+            desc="Mendorong koordinasi dan kerja sama antaranggota untuk mendukung keamanan serta respons komunitas sesuai mekanisme organisasi."
+          />
+          <ProgramCard
+            n="02"
+            icon={Network}
+            title={<>Jaringan &amp; <span className="whitespace-nowrap">Sub-Driver</span></>}
+            tag="Kolaborasi Operasional"
+            desc="Memperkuat koneksi antaranggota dan mendukung kolaborasi operasional dalam ekosistem usaha rental mobil."
+            img={heroImg}
+          />
+          <ProgramCard
+            n="03"
+            icon={Scale}
+            title="Legalitas & Kemitraan"
+            tag="Profesionalitas Usaha"
+            desc="Mendorong profesionalitas usaha dan membuka ruang kolaborasi dengan mitra yang relevan."
+          />
         </div>
       </section>
 
