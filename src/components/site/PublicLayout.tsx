@@ -1,18 +1,57 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import logoDpd from "@/assets/logo-dpd-jabar.png.asset.json";
 import logoArmi from "@/assets/logo-armi.png.asset.json";
 
 export { logoArmi, logoDpd };
 
-const NAV = [
+type NavLink = { to: "/" | "/tentang" | "/galeri" | "/anggota" | "/gabung" | "/agenda" | "/jadwal-eksekusi" | "/artikel" | "/kontak"; label: string };
+type NavItem = NavLink | { label: string; children: NavLink[] };
+
+const NAV_TREE: NavItem[] = [
   { to: "/", label: "Beranda" },
   { to: "/tentang", label: "Tentang Kami" },
-  { to: "/anggota", label: "Cari Anggota" },
-  { to: "/info-kegiatan", label: "Kegiatan" },
+  { label: "Komunitas", children: [
+    { to: "/galeri", label: "Galeri" },
+    { to: "/anggota", label: "Cari Anggota" },
+    { to: "/gabung", label: "Gabung Menjadi Anggota" },
+  ] },
+  { label: "Kegiatan", children: [
+    { to: "/agenda", label: "Agenda" },
+    { to: "/jadwal-eksekusi", label: "Jadwal Eksekusi" },
+  ] },
+  { to: "/artikel", label: "Artikel" },
   { to: "/kontak", label: "Kontak" },
-] as const;
+];
+const NAV: NavLink[] = NAV_TREE.flatMap((n) => ("children" in n ? n.children : [n]));
+
+const topCls = "relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground";
+
+function DesktopNav() {
+  return (
+    <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
+      {NAV_TREE.map((n) => "children" in n ? (
+        <div key={n.label} className="group relative">
+          <button type="button" className={`${topCls} inline-flex items-center gap-1`} aria-haspopup="true">
+            {n.label}<ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
+          </button>
+          <div className="invisible absolute left-1/2 top-full z-50 min-w-56 -translate-x-1/2 rounded-md border border-border bg-background p-2 opacity-0 shadow-lg transition-all group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+            {n.children.map((c) => (
+              <Link key={c.to} to={c.to} className="block rounded px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/70 hover:bg-card hover:text-primary"
+                activeProps={{ className: "!text-primary" }}>{c.label}</Link>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Link key={n.to} to={n.to} activeOptions={{ exact: true }} className={topCls}
+          activeProps={{ className: "after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary !text-primary" }}>
+          {n.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
 
 /** Official ARMI DPD Jawa Barat logo. */
 export function LogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
@@ -47,18 +86,10 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
       <header className={`${overlay ? "fixed" : "sticky"} inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${solid ? "border-border bg-background/95 backdrop-blur" : "border-transparent bg-transparent"}`}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5">
           <Link to="/" aria-label="Beranda ARMI DPD Jabar"><Brand /></Link>
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} activeOptions={{ exact: true }}
-                className="relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground"
-                activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary !text-primary" }}>
-                {n.label}
-              </Link>
-            ))}
-          </nav>
+          <DesktopNav />
           <div className="hidden items-center gap-4 lg:flex">
             <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary hover:text-foreground">Portal Login</Link>
-            <Link to="/kontak" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
+            <Link to="/gabung" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
           </div>
@@ -67,15 +98,22 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           </button>
         </div>
         {open && (
-          <nav className="flex flex-col border-t border-border bg-background px-5 pb-5 pt-2 lg:hidden">
-            {NAV.map((n) => (
+          <nav className="flex max-h-[80vh] flex-col overflow-y-auto border-t border-border bg-background px-5 pb-5 pt-2 lg:hidden">
+            {NAV_TREE.map((n) => "children" in n ? (
+              <div key={n.label} className="border-b border-border py-3">
+                <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{n.label}</div>
+                {n.children.map((c) => (
+                  <Link key={c.to} to={c.to} onClick={() => setOpen(false)} className="block py-2 pl-3 text-sm font-medium" activeProps={{ className: "text-primary" }}>{c.label}</Link>
+                ))}
+              </div>
+            ) : (
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} activeOptions={{ exact: true }}
                 className="border-b border-border py-3 text-sm font-medium" activeProps={{ className: "text-primary" }}>
                 {n.label}
               </Link>
             ))}
-            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Masuk Portal</Link>
-            <Link to="/kontak" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
+            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Portal Login</Link>
+            <Link to="/gabung" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
           </nav>
         )}
       </header>
@@ -99,7 +137,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Organisasi</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/tentang" className="hover:text-primary">Profil & Visi Misi</Link></li>
-              <li><Link to="/kontak" className="hover:text-primary">Informasi Keanggotaan</Link></li>
+              <li><Link to="/gabung" className="hover:text-primary">Gabung Menjadi Anggota</Link></li>
               <li><Link to="/login" className="hover:text-primary">Portal Anggota</Link></li>
             </ul>
           </div>

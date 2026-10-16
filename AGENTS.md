@@ -11,3 +11,5 @@
 
 - Login uses member number mapped to synthetic email `<nomor lowercase>@armi.local`; accounts are only created by admin server functions (src/lib/anggota.functions.ts) — no self-signup.
 - Roles are enforced via `user_roles` + `has_role` in RLS; `anggota.role` is a display copy kept in sync by admin functions.
+- Public page content/SEO lives in `halaman` (one row per page slug) merged over code defaults in `src/lib/cms.ts`; why: pages render even before admins save anything.
+- Uploaded images go to the private `media` bucket and are stored as long-lived signed URLs; why: public buckets are blocked on this project.

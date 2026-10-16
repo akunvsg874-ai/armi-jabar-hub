@@ -53,6 +53,48 @@ export type Database = {
         }
         Relationships: []
       }
+      artikel: {
+        Row: {
+          created_at: string
+          gambar: string | null
+          id: string
+          isi: string
+          judul: string
+          ringkasan: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          tanggal: string
+          terbit: boolean
+        }
+        Insert: {
+          created_at?: string
+          gambar?: string | null
+          id?: string
+          isi?: string
+          judul: string
+          ringkasan?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          tanggal?: string
+          terbit?: boolean
+        }
+        Update: {
+          created_at?: string
+          gambar?: string | null
+          id?: string
+          isi?: string
+          judul?: string
+          ringkasan?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          tanggal?: string
+          terbit?: boolean
+        }
+        Relationships: []
+      }
       blacklist: {
         Row: {
           id: string
@@ -86,6 +128,69 @@ export type Database = {
         }
         Relationships: []
       }
+      galeri: {
+        Row: {
+          created_at: string
+          gambar: string
+          id: string
+          judul: string
+          urutan: number
+        }
+        Insert: {
+          created_at?: string
+          gambar: string
+          id?: string
+          judul?: string
+          urutan?: number
+        }
+        Update: {
+          created_at?: string
+          gambar?: string
+          id?: string
+          judul?: string
+          urutan?: number
+        }
+        Relationships: []
+      }
+      halaman: {
+        Row: {
+          hero_desc: string | null
+          hero_eyebrow: string | null
+          hero_image: string | null
+          hero_title: string | null
+          konten: Json
+          og_image: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          hero_desc?: string | null
+          hero_eyebrow?: string | null
+          hero_image?: string | null
+          hero_title?: string | null
+          konten?: Json
+          og_image?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          hero_desc?: string | null
+          hero_eyebrow?: string | null
+          hero_image?: string | null
+          hero_title?: string | null
+          konten?: Json
+          og_image?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kegiatan: {
         Row: {
           created_at: string
@@ -116,6 +221,42 @@ export type Database = {
           judul?: string
           lokasi?: string
           tanggal?: string
+        }
+        Relationships: []
+      }
+      pendaftaran: {
+        Row: {
+          created_at: string
+          id: string
+          jumlah_unit: number | null
+          nama: string
+          nama_usaha: string
+          no_hp: string
+          pesan: string | null
+          status: string
+          wilayah: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jumlah_unit?: number | null
+          nama: string
+          nama_usaha: string
+          no_hp: string
+          pesan?: string | null
+          status?: string
+          wilayah: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jumlah_unit?: number | null
+          nama?: string
+          nama_usaha?: string
+          no_hp?: string
+          pesan?: string | null
+          status?: string
+          wilayah?: string
         }
         Relationships: []
       }

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, Users, ShieldAlert, Wallet, CalendarDays, UserCircle, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Newspaper, Images, UserPlus, ShieldAlert, Wallet, CalendarDays, UserCircle, LogOut, Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery, type Role } from "@/lib/session";
 import { LogoMark } from "@/components/site/PublicLayout";
@@ -29,6 +29,10 @@ const MENU: Record<Role, Item[]> = {
     { to: "/blacklist", label: "Blacklist Konsumen", icon: ShieldAlert },
     { to: "/keuangan", label: "Keuangan", icon: Wallet },
     { to: "/kegiatan", label: "Kelola Kegiatan", icon: CalendarDays },
+    { to: "/admin/pendaftaran", label: "Pendaftaran", icon: UserPlus },
+    { to: "/admin/halaman", label: "Kelola Halaman", icon: FileText },
+    { to: "/admin/artikel", label: "Kelola Artikel", icon: Newspaper },
+    { to: "/admin/galeri", label: "Kelola Galeri", icon: Images },
   ],
   bendahara: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },

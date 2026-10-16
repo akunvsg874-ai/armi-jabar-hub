@@ -6,20 +6,17 @@ import { PublicLayout, PageHeading } from "@/components/site/PublicLayout";
 import { StatusBadge } from "@/components/site/shared";
 import { supabase } from "@/integrations/supabase/client";
 import { WILAYAH_JABAR } from "@/lib/armi";
+import { halamanQuery, seoMeta } from "@/lib/cms";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/anggota")({
-  head: () => ({
-    meta: [
-      { title: "Cari Anggota — ARMI DPD Jawa Barat" },
-      { name: "description", content: "Verifikasi rental mobil resmi anggota ARMI Jawa Barat berdasarkan nama, usaha, atau wilayah." },
-      { property: "og:title", content: "Cari Anggota ARMI Jabar" },
-      { property: "og:description", content: "Verifikasi rental mobil resmi anggota ARMI Jawa Barat." },
-    ],
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(halamanQuery("anggota")),
+  head: ({ loaderData }) => seoMeta(loaderData, "anggota"),
   component: Page,
 });
 
 function Page() {
+  const { data: h } = useSuspenseQuery(halamanQuery("anggota"));
   const [q, setQ] = useState("");
   const [debounced, setDebounced] = useState("");
   const [wil, setWil] = useState("");
@@ -36,7 +33,7 @@ function Page() {
   return (
     <PublicLayout>
       <section className="mx-auto max-w-7xl px-4 py-16">
-        <PageHeading eyebrow="Direktori" title="JARINGAN ANGGOTA ARMI" desc="Temukan pelaku usaha rental mobil dalam jaringan ARMI DPD Jawa Barat." />
+        <PageHeading eyebrow={h.hero_eyebrow} title={h.hero_title} desc={h.hero_desc} />
         <div className="mb-8 grid gap-3 md:grid-cols-[2fr_1fr]">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
