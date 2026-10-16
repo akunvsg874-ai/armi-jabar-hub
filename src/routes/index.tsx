@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { KegiatanDetail } from "@/components/site/KegiatanDetail";
 import { Lightbox } from "@/components/site/Lightbox";
 import type { Kegiatan } from "@/components/site/shared";
@@ -36,60 +36,38 @@ const H2 = "mt-3 text-4xl font-black uppercase leading-[0.95] tracking-wide md:t
 const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark";
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
-const TONE = {
-  orange: {
-    card: "hover:border-primary/60",
-    tile: "text-primary group-hover:border-primary/50 group-hover:shadow-glow",
-    num: "group-hover:text-primary/[0.09]",
-    bar: "from-primary/80",
-    glow: "bg-primary/25",
-  },
-  green: {
-    card: "hover:border-armi-green-light/60",
-    tile: "text-armi-green-light group-hover:border-armi-green-light/50",
-    num: "group-hover:text-armi-green-light/[0.10]",
-    bar: "from-armi-green-light/80",
-    glow: "bg-armi-green-light/25",
-  },
-} as const;
-
-/** Program card: numbered watermark, icon tile, accent rule that grows on hover. */
-function ProgramCard({ n, icon: Icon, title, desc, tag, img, tone = "orange" }: {
+/** Program card: numbered watermark, icon tile that fills on hover, accent rule that grows. */
+function ProgramCard({ n, icon: Icon, title, desc, tag, img }: {
   n: string;
   icon: LucideIcon;
-  title: string;
+  title: ReactNode;
   desc: string;
   tag: string;
   img?: string;
-  tone?: keyof typeof TONE;
 }) {
-  const t = TONE[tone];
   return (
-    <article className={`group relative flex min-h-[380px] flex-col overflow-hidden rounded-xl border border-border bg-card/50 p-8 transition-all duration-500 hover:-translate-y-1 ${t.card}`}>
+    <article className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-xl border border-border bg-card/50 p-8 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-glow">
       {img && (
         <>
-          <img src={img} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-[0.12] transition-opacity duration-700 group-hover:opacity-25" />
-          <div aria-hidden className="absolute inset-0 bg-background/60" />
+          <img src={img} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-[0.14] transition-opacity duration-700 group-hover:opacity-30" />
+          <div aria-hidden className="absolute inset-0 bg-background/65" />
         </>
       )}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:repeating-linear-gradient(-45deg,var(--foreground)_0_1px,transparent_1px_10px)]" />
-      <div aria-hidden className={`pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100 ${t.glow}`} />
-      <span aria-hidden className={`pointer-events-none absolute -bottom-12 right-2 select-none font-display text-[132px] font-black leading-none text-foreground/[0.05] transition-colors duration-700 ${t.num}`}>{n}</span>
-      <span aria-hidden className={`absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-gradient-to-r to-transparent transition-transform duration-700 group-hover:scale-x-100 ${t.bar}`} />
+      <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary/20 opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
+      <span aria-hidden className="pointer-events-none absolute -top-9 right-1 select-none font-display text-[128px] font-black leading-none text-foreground/[0.05] transition-colors duration-700 group-hover:text-primary/[0.12]">{n}</span>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-gradient-to-r from-primary/80 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
 
-      <div className="relative flex items-start justify-between">
-        <span className={`inline-flex h-14 w-14 items-center justify-center rounded-lg border border-border bg-background/80 transition-all duration-500 group-hover:-translate-y-1 ${t.tile}`}>
-          <Icon className="h-7 w-7" />
-        </span>
-        <span className="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60">{n} /</span>
-      </div>
+      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-lg border border-border bg-background/80 text-primary transition-all duration-500 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-glow">
+        <Icon className="h-7 w-7" />
+      </span>
 
       <h3 className="relative mt-9 text-2xl font-black uppercase leading-[1.05] tracking-wide">{title}</h3>
-      <p className="relative mt-3 text-[15px] leading-relaxed text-muted-foreground">{desc}</p>
+      <p className="relative mt-3 text-[15px] leading-relaxed text-foreground/70">{desc}</p>
 
       <div className="relative mt-auto pt-8">
-        <span className={`block h-[2px] w-full origin-left scale-x-[0.16] bg-gradient-to-r to-transparent transition-transform duration-700 group-hover:scale-x-100 ${t.bar}`} />
-        <span className="mt-4 block text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground/70">{tag}</span>
+        <span className="block h-[2px] w-full origin-left scale-x-[0.16] bg-gradient-to-r from-primary/80 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+        <span className="mt-4 block text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">{tag}</span>
       </div>
     </article>
   );
