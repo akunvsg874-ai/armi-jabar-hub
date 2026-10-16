@@ -101,7 +101,7 @@ function Index() {
       </section>
 
       {/* INTRO — light */}
-      <section className="torn-top torn-bottom relative z-10 -my-3 bg-ivory text-ink">
+      <section className="border-y border-border bg-ivory text-ink">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-2 lg:items-center">
           <div>
             <Label light n="01">Tentang Komunitas</Label>
@@ -204,7 +204,7 @@ function Index() {
       </section>
 
       {/* REGIONAL + DIRECTORY */}
-      <section className="torn-top torn-bottom relative z-10 -my-3 bg-ivory text-ink">
+      <section className="border-y border-border bg-ivory text-ink">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-[1fr_1.2fr]">
           <div>
             <Label light n="05">Jaringan Kita</Label>
