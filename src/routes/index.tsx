@@ -163,7 +163,7 @@ function Index() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl">
-              <Label n="04">Cerita Kebersamaan</Label>
+              <Label n="03">Cerita Kebersamaan</Label>
               <h2 className={`${H2} bar-mark`}>Galeri Kegiatan</h2>
               <p className="mt-2 -rotate-2 font-script text-2xl text-primary">Lebih dari sekadar komunitas</p>
               <p className="mt-4 text-muted-foreground">Dokumentasi kegiatan, pertemuan, dan momen kebersamaan anggota ARMI Jawa Barat.</p>
@@ -183,7 +183,7 @@ function Index() {
 
       {/* AGENDA */}
       <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
-        <Label n="03">Agenda Komunitas</Label>
+        <Label n="04">Agenda Komunitas</Label>
         <h2 className={`${H2} bar-mark`}>Kegiatan Terbaru</h2>
         <div className="mt-12 divide-y divide-border border-y border-border">
           {terbaru.length ? terbaru.map((k) => {
@@ -215,7 +215,7 @@ function Index() {
         <section className="border-t border-border bg-card py-20 md:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <div><Label n="04">Kabar & Wawasan</Label><h2 className={`${H2} bar-mark`}>Artikel Terbaru</h2></div>
+              <div><Label n="05">Kabar & Wawasan</Label><h2 className={`${H2} bar-mark`}>Artikel Terbaru</h2></div>
               <Link to="/artikel" className={btnS}>Semua Artikel</Link>
             </div>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -237,7 +237,7 @@ function Index() {
       <section className="border-y border-border bg-ivory text-ink">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <Label light n="05">Jaringan Kita</Label>
+            <Label light n="06">Jaringan Kita</Label>
             <h2 className={H2}>Di Seluruh<br /><span className="text-primary">Jawa Barat</span></h2>
             <p className="mt-3 -rotate-2 font-script text-2xl">27 kabupaten/kota, satu tujuan</p>
             <p className="mt-5 max-w-md text-ink-muted">Temukan anggota ARMI berdasarkan wilayah dan kenali jaringan usaha rental mobil di Jawa Barat.</p>
@@ -262,7 +262,7 @@ function Index() {
       <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
-            <Label n="06">Jaringan Anggota</Label>
+            <Label n="07">Jaringan Anggota</Label>
             <h2 className={H2}>Kenali Pelaku Usaha dalam Jaringan ARMI.</h2>
           </div>
           <Link to="/anggota" className={btnS}>Buka Direktori</Link>
