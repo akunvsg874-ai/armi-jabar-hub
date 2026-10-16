@@ -28,6 +28,10 @@ import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated
 import { Route as ArtikelIndexRouteImport } from './routes/artikel.index'
 import { Route as ArtikelSlugRouteImport } from './routes/artikel.$slug'
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
+import { Route as AuthenticatedAdminArtikelRouteImport } from './routes/_authenticated/admin.artikel'
+import { Route as AuthenticatedAdminGaleriRouteImport } from './routes/_authenticated/admin.galeri'
+import { Route as AuthenticatedAdminHalamanRouteImport } from './routes/_authenticated/admin.halaman'
+import { Route as AuthenticatedAdminPendaftaranRouteImport } from './routes/_authenticated/admin.pendaftaran'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -124,6 +128,30 @@ const AuthenticatedAdminAnggotaRoute =
     path: '/admin/anggota',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminArtikelRoute =
+  AuthenticatedAdminArtikelRouteImport.update({
+    id: '/admin/artikel',
+    path: '/admin/artikel',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminGaleriRoute =
+  AuthenticatedAdminGaleriRouteImport.update({
+    id: '/admin/galeri',
+    path: '/admin/galeri',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminHalamanRoute =
+  AuthenticatedAdminHalamanRouteImport.update({
+    id: '/admin/halaman',
+    path: '/admin/halaman',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminPendaftaranRoute =
+  AuthenticatedAdminPendaftaranRouteImport.update({
+    id: '/admin/pendaftaran',
+    path: '/admin/pendaftaran',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,6 +172,10 @@ export interface FileRoutesByFullPath {
   '/artikel/$slug': typeof ArtikelSlugRoute
   '/artikel/': typeof ArtikelIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/admin/artikel': typeof AuthenticatedAdminArtikelRoute
+  '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
+  '/admin/halaman': typeof AuthenticatedAdminHalamanRoute
+  '/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +196,10 @@ export interface FileRoutesByTo {
   '/artikel/$slug': typeof ArtikelSlugRoute
   '/artikel': typeof ArtikelIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/admin/artikel': typeof AuthenticatedAdminArtikelRoute
+  '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
+  '/admin/halaman': typeof AuthenticatedAdminHalamanRoute
+  '/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +222,10 @@ export interface FileRoutesById {
   '/artikel/$slug': typeof ArtikelSlugRoute
   '/artikel/': typeof ArtikelIndexRoute
   '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/_authenticated/admin/artikel': typeof AuthenticatedAdminArtikelRoute
+  '/_authenticated/admin/galeri': typeof AuthenticatedAdminGaleriRoute
+  '/_authenticated/admin/halaman': typeof AuthenticatedAdminHalamanRoute
+  '/_authenticated/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,6 +248,10 @@ export interface FileRouteTypes {
     | '/artikel/$slug'
     | '/artikel/'
     | '/admin/anggota'
+    | '/admin/artikel'
+    | '/admin/galeri'
+    | '/admin/halaman'
+    | '/admin/pendaftaran'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +272,10 @@ export interface FileRouteTypes {
     | '/artikel/$slug'
     | '/artikel'
     | '/admin/anggota'
+    | '/admin/artikel'
+    | '/admin/galeri'
+    | '/admin/halaman'
+    | '/admin/pendaftaran'
   id:
     | '__root__'
     | '/'
@@ -249,6 +297,10 @@ export interface FileRouteTypes {
     | '/artikel/$slug'
     | '/artikel/'
     | '/_authenticated/admin/anggota'
+    | '/_authenticated/admin/artikel'
+    | '/_authenticated/admin/galeri'
+    | '/_authenticated/admin/halaman'
+    | '/_authenticated/admin/pendaftaran'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -402,6 +454,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAnggotaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/artikel': {
+      id: '/_authenticated/admin/artikel'
+      path: '/admin/artikel'
+      fullPath: '/admin/artikel'
+      preLoaderRoute: typeof AuthenticatedAdminArtikelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/galeri': {
+      id: '/_authenticated/admin/galeri'
+      path: '/admin/galeri'
+      fullPath: '/admin/galeri'
+      preLoaderRoute: typeof AuthenticatedAdminGaleriRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/halaman': {
+      id: '/_authenticated/admin/halaman'
+      path: '/admin/halaman'
+      fullPath: '/admin/halaman'
+      preLoaderRoute: typeof AuthenticatedAdminHalamanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/pendaftaran': {
+      id: '/_authenticated/admin/pendaftaran'
+      path: '/admin/pendaftaran'
+      fullPath: '/admin/pendaftaran'
+      preLoaderRoute: typeof AuthenticatedAdminPendaftaranRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -412,6 +492,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedKeuanganRoute: typeof AuthenticatedKeuanganRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedAdminAnggotaRoute: typeof AuthenticatedAdminAnggotaRoute
+  AuthenticatedAdminArtikelRoute: typeof AuthenticatedAdminArtikelRoute
+  AuthenticatedAdminGaleriRoute: typeof AuthenticatedAdminGaleriRoute
+  AuthenticatedAdminHalamanRoute: typeof AuthenticatedAdminHalamanRoute
+  AuthenticatedAdminPendaftaranRoute: typeof AuthenticatedAdminPendaftaranRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -421,6 +505,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedKeuanganRoute: AuthenticatedKeuanganRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedAdminAnggotaRoute: AuthenticatedAdminAnggotaRoute,
+  AuthenticatedAdminArtikelRoute: AuthenticatedAdminArtikelRoute,
+  AuthenticatedAdminGaleriRoute: AuthenticatedAdminGaleriRoute,
+  AuthenticatedAdminHalamanRoute: AuthenticatedAdminHalamanRoute,
+  AuthenticatedAdminPendaftaranRoute: AuthenticatedAdminPendaftaranRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
