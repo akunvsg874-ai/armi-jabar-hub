@@ -86,18 +86,10 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
       <header className={`${overlay ? "fixed" : "sticky"} inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${solid ? "border-border bg-background/95 backdrop-blur" : "border-transparent bg-transparent"}`}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5">
           <Link to="/" aria-label="Beranda ARMI DPD Jabar"><Brand /></Link>
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} activeOptions={{ exact: true }}
-                className="relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground"
-                activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary !text-primary" }}>
-                {n.label}
-              </Link>
-            ))}
-          </nav>
+          <DesktopNav />
           <div className="hidden items-center gap-4 lg:flex">
             <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary hover:text-foreground">Portal Login</Link>
-            <Link to="/kontak" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
+            <Link to="/gabung" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
           </div>
@@ -106,15 +98,22 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           </button>
         </div>
         {open && (
-          <nav className="flex flex-col border-t border-border bg-background px-5 pb-5 pt-2 lg:hidden">
-            {NAV.map((n) => (
+          <nav className="flex max-h-[80vh] flex-col overflow-y-auto border-t border-border bg-background px-5 pb-5 pt-2 lg:hidden">
+            {NAV_TREE.map((n) => "children" in n ? (
+              <div key={n.label} className="border-b border-border py-3">
+                <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{n.label}</div>
+                {n.children.map((c) => (
+                  <Link key={c.to} to={c.to} onClick={() => setOpen(false)} className="block py-2 pl-3 text-sm font-medium" activeProps={{ className: "text-primary" }}>{c.label}</Link>
+                ))}
+              </div>
+            ) : (
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} activeOptions={{ exact: true }}
                 className="border-b border-border py-3 text-sm font-medium" activeProps={{ className: "text-primary" }}>
                 {n.label}
               </Link>
             ))}
-            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Masuk Portal</Link>
-            <Link to="/kontak" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
+            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Portal Login</Link>
+            <Link to="/gabung" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
           </nav>
         )}
       </header>
