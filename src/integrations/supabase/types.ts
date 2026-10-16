@@ -14,16 +14,229 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      anggota: {
+        Row: {
+          created_at: string
+          id: string
+          nama_lengkap: string
+          nama_usaha: string
+          no_hp: string
+          nomor_anggota: string
+          role: Database["public"]["Enums"]["app_role"]
+          status: Database["public"]["Enums"]["status_anggota"]
+          user_id: string | null
+          wilayah: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nama_lengkap: string
+          nama_usaha: string
+          no_hp: string
+          nomor_anggota: string
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["status_anggota"]
+          user_id?: string | null
+          wilayah: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nama_lengkap?: string
+          nama_usaha?: string
+          no_hp?: string
+          nomor_anggota?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["status_anggota"]
+          user_id?: string | null
+          wilayah?: string
+        }
+        Relationships: []
+      }
+      blacklist: {
+        Row: {
+          id: string
+          input_by: string
+          keterangan: string
+          nama_konsumen: string
+          nik: string | null
+          no_hp_konsumen: string | null
+          tanggal_input: string
+          wilayah: string
+        }
+        Insert: {
+          id?: string
+          input_by: string
+          keterangan: string
+          nama_konsumen: string
+          nik?: string | null
+          no_hp_konsumen?: string | null
+          tanggal_input?: string
+          wilayah: string
+        }
+        Update: {
+          id?: string
+          input_by?: string
+          keterangan?: string
+          nama_konsumen?: string
+          nik?: string | null
+          no_hp_konsumen?: string | null
+          tanggal_input?: string
+          wilayah?: string
+        }
+        Relationships: []
+      }
+      kegiatan: {
+        Row: {
+          created_at: string
+          deskripsi: string
+          foto: string
+          id: string
+          jenis: Database["public"]["Enums"]["jenis_kegiatan"]
+          judul: string
+          lokasi: string
+          tanggal: string
+        }
+        Insert: {
+          created_at?: string
+          deskripsi: string
+          foto?: string
+          id?: string
+          jenis: Database["public"]["Enums"]["jenis_kegiatan"]
+          judul: string
+          lokasi: string
+          tanggal: string
+        }
+        Update: {
+          created_at?: string
+          deskripsi?: string
+          foto?: string
+          id?: string
+          jenis?: Database["public"]["Enums"]["jenis_kegiatan"]
+          judul?: string
+          lokasi?: string
+          tanggal?: string
+        }
+        Relationships: []
+      }
+      sub_kategori: {
+        Row: {
+          id: string
+          kategori: Database["public"]["Enums"]["kategori_keuangan"]
+          nama: string
+        }
+        Insert: {
+          id?: string
+          kategori: Database["public"]["Enums"]["kategori_keuangan"]
+          nama: string
+        }
+        Update: {
+          id?: string
+          kategori?: Database["public"]["Enums"]["kategori_keuangan"]
+          nama?: string
+        }
+        Relationships: []
+      }
+      transaksi: {
+        Row: {
+          created_at: string
+          id: string
+          input_by: string
+          kategori: Database["public"]["Enums"]["kategori_keuangan"]
+          keterangan: string | null
+          nominal: number
+          sub_kategori: string
+          tanggal: string
+          tipe: Database["public"]["Enums"]["tipe_transaksi"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_by: string
+          kategori: Database["public"]["Enums"]["kategori_keuangan"]
+          keterangan?: string | null
+          nominal: number
+          sub_kategori: string
+          tanggal?: string
+          tipe: Database["public"]["Enums"]["tipe_transaksi"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_by?: string
+          kategori?: Database["public"]["Enums"]["kategori_keuangan"]
+          keterangan?: string | null
+          nominal?: number
+          sub_kategori?: string
+          tanggal?: string
+          tipe?: Database["public"]["Enums"]["tipe_transaksi"]
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cari_anggota_publik: {
+        Args: { q: string }
+        Returns: {
+          nama_lengkap: string
+          nama_usaha: string
+          nomor_anggota: string
+          status: Database["public"]["Enums"]["status_anggota"]
+          wilayah: string
+        }[]
+      }
+      cari_blacklist: {
+        Args: { q: string }
+        Returns: {
+          id: string
+          keterangan: string
+          nama_konsumen: string
+          tanggal_input: string
+          wilayah: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      next_nomor_anggota: { Args: never; Returns: string }
+      peek_nomor_anggota: { Args: never; Returns: string }
+      statistik_publik: { Args: never; Returns: Json }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "bendahara" | "anggota"
+      jenis_kegiatan: "SOSIAL" | "KOPDAR" | "EKSEKUSI" | "ANNIVERSARY"
+      kategori_keuangan:
+        | "KAS"
+        | "KEORGANISASIAN"
+        | "KOMUNITAS"
+        | "SUMBANGAN_SOSIAL"
+      status_anggota: "aktif" | "non_aktif"
+      tipe_transaksi: "pemasukan" | "pengeluaran"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +363,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "bendahara", "anggota"],
+      jenis_kegiatan: ["SOSIAL", "KOPDAR", "EKSEKUSI", "ANNIVERSARY"],
+      kategori_keuangan: [
+        "KAS",
+        "KEORGANISASIAN",
+        "KOMUNITAS",
+        "SUMBANGAN_SOSIAL",
+      ],
+      status_anggota: ["aktif", "non_aktif"],
+      tipe_transaksi: ["pemasukan", "pengeluaran"],
+    },
   },
 } as const
