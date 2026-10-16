@@ -36,6 +36,28 @@ const H2 = "mt-3 text-4xl font-black uppercase leading-[0.95] tracking-wide md:t
 const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark";
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
+/** Hero background: wide photos fill the area; small/square images (e.g. logos) become an elegant centered emblem. */
+function HeroBg({ src }: { src: string }) {
+  const [emblem, setEmblem] = useState<boolean | null>(null);
+  return (
+    <div aria-hidden className="absolute inset-0">
+      {emblem ? (
+        <>
+          <img src={src} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-20 blur-3xl" />
+          <img src={src} alt="" className="absolute left-1/2 top-1/2 h-[70%] max-h-[560px] w-auto -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.12]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background" />
+        </>
+      ) : (
+        <>
+          <img src={src} alt="" onLoad={(e) => { const i = e.currentTarget; setEmblem(i.naturalWidth < 1200 || i.naturalWidth / i.naturalHeight < 1.3); }}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${emblem === false ? "opacity-100" : "opacity-0"}`} />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/65 to-background" />
+        </>
+      )}
+    </div>
+  );
+}
+
 function Index() {
   const { data: h } = useSuspenseQuery(halamanQuery("beranda"));
   const { data: kegiatan = [] } = useQuery(kegiatanQuery);
@@ -70,8 +92,7 @@ function Index() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         {h.hero_image && (<>
-          <img src={h.hero_image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background" />
+          <HeroBg src={h.hero_image} />
         </>)}
         <div aria-hidden className="absolute inset-0 bg-radial-glow" />
         <img src={logoArmi.url} alt="" aria-hidden width={431} height={461} className="pointer-events-none absolute left-1/2 top-24 w-[720px] max-w-[95vw] -translate-x-1/2 opacity-[0.05] grayscale" />
