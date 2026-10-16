@@ -37,7 +37,7 @@ function Page() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const r = schema.safeParse({ ...f, jumlah_unit: f.jumlah_unit || undefined, pesan: f.pesan || undefined });
-    if (!r.success) return void toast.error(r.error.issues[0].message);
+    if (!r.success) return void toast.error(r.error.issues[0]?.message ?? "Data tidak valid");
     setBusy(true);
     const { error } = await supabase.from("pendaftaran").insert({ ...r.data, jumlah_unit: r.data.jumlah_unit ?? null, pesan: r.data.pesan ?? null });
     setBusy(false);

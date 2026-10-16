@@ -55,8 +55,11 @@ export const HALAMAN_DEFAULT: Record<string, Halaman> = {
 };
 
 /** Merge a stored row over defaults; empty stored fields fall back. */
+export const defaultHalaman = (slug: string): Halaman => HALAMAN_DEFAULT[slug] ?? { ...HALAMAN_DEFAULT["beranda"]!, slug, label: slug };
+export const SLUGS = Object.keys(HALAMAN_DEFAULT);
+
 export function mergeHalaman(slug: string, row: HalamanRow | null): Halaman {
-  const base = HALAMAN_DEFAULT[slug];
+  const base = defaultHalaman(slug);
   if (!row) return base;
   const pick = (k: keyof HalamanRow & keyof Halaman) => ((row[k] as string | null)?.trim() ? (row[k] as string) : (base[k] as string));
   const konten = Array.isArray(row.konten) && row.konten.length ? (row.konten as unknown as Section[]) : base.konten;
@@ -76,7 +79,7 @@ export const galeriQuery = queryOptions({ queryKey: ["galeri"], queryFn: () => l
 
 /** Builds head() meta for a CMS page. og:image only when an absolute URL is set. */
 export function seoMeta(h: Halaman | undefined, fallbackSlug: string) {
-  const p = h ?? HALAMAN_DEFAULT[fallbackSlug];
+  const p = h ?? defaultHalaman(fallbackSlug);
   const meta: Array<Record<string, string>> = [
     { title: p.seo_title },
     { name: "description", content: p.seo_description },

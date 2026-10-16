@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { HALAMAN_DEFAULT, mergeHalaman, type Halaman, type Section } from "@/lib/cms";
+import { SLUGS, defaultHalaman, mergeHalaman, type Halaman, type Section } from "@/lib/cms";
 import { PageTitle, Field, inputCls, btnPrimary, btnSecondary, btnDanger } from "@/components/portal/ui";
 import { ImageInput } from "@/components/portal/ImageInput";
 import type { Json } from "@/integrations/supabase/types";
@@ -15,21 +15,20 @@ export const Route = createFileRoute("/_authenticated/admin/halaman")({
   component: Page,
 });
 
-const SLUGS = Object.keys(HALAMAN_DEFAULT);
 
 function Page() {
   const qc = useQueryClient();
-  const [slug, setSlug] = useState(SLUGS[0]);
+  const [slug, setSlug] = useState<string>("beranda");
   const { data: row, isLoading } = useQuery({
     queryKey: ["admin-halaman", slug],
     queryFn: async () => (await supabase.from("halaman").select("*").eq("slug", slug).maybeSingle()).data,
   });
-  const [f, setF] = useState<Halaman>(HALAMAN_DEFAULT[slug]);
+  const [f, setF] = useState<Halaman>(defaultHalaman("beranda"));
   useEffect(() => { if (!isLoading) setF(mergeHalaman(slug, row ?? null)); }, [row, isLoading, slug]);
   const set = (k: keyof Halaman) => (v: string) => setF({ ...f, [k]: v });
   const txt = (k: keyof Halaman) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => set(k)(e.target.value);
   const setSec = (i: number, p: Partial<Section>) => setF({ ...f, konten: f.konten.map((s, j) => (j === i ? { ...s, ...p } : s)) });
-  const move = (i: number, d: number) => { const k = [...f.konten]; const j = i + d; if (j < 0 || j >= k.length) return; [k[i], k[j]] = [k[j], k[i]]; setF({ ...f, konten: k }); };
+  const move = (i: number, d: number) => { const k = [...f.konten]; const j = i + d; if (j < 0 || j >= k.length) return; const a = k[i]!; k[i] = k[j]!; k[j] = a; setF({ ...f, konten: k }); };
 
   async function save() {
     const { error } = await supabase.from("halaman").upsert({
@@ -49,7 +48,7 @@ function Page() {
         action={<button className={btnPrimary} onClick={save}>Simpan Halaman</button>} />
       <div className="mb-6 flex flex-wrap gap-2">
         {SLUGS.map((s) => (
-          <button key={s} onClick={() => setSlug(s)} className={s === slug ? btnPrimary : btnSecondary}>{HALAMAN_DEFAULT[s].label}</button>
+          <button key={s} onClick={() => setSlug(s)} className={s === slug ? btnPrimary : btnSecondary}>{defaultHalaman(s).label}</button>
         ))}
       </div>
       <div className="grid gap-6 xl:grid-cols-2">
