@@ -34,7 +34,7 @@ function Page() {
     const { error } = await supabase.from("halaman").upsert({
       slug, seo_title: f.seo_title, seo_description: f.seo_description, og_image: f.og_image,
       hero_eyebrow: f.hero_eyebrow, hero_title: f.hero_title, hero_desc: f.hero_desc, hero_image: f.hero_image,
-      konten: f.konten.filter((s) => s.judul.trim() || s.isi.trim()) as unknown as Json, updated_at: new Date().toISOString(),
+      konten: f.konten.filter((s) => s.judul.trim() || s.isi.trim() || (s.gambar ?? "").trim()) as unknown as Json, updated_at: new Date().toISOString(),
     });
     if (error) return void toast.error("Gagal menyimpan");
     toast.success("Halaman tersimpan");
@@ -58,6 +58,14 @@ function Page() {
           <Field label={slug === "beranda" ? "Judul (Enter = baris baru, *teks* = warna oranye)" : "Judul"}>{slug === "beranda" ? <textarea rows={3} className={inputCls} value={f.hero_title} onChange={txt("hero_title")} maxLength={160} /> : <input className={inputCls} value={f.hero_title} onChange={txt("hero_title")} maxLength={160} />}</Field>
           <Field label="Deskripsi"><textarea className={inputCls} rows={3} value={f.hero_desc} onChange={txt("hero_desc")} maxLength={600} /></Field>
           {slug !== "anggota" && <Field label="Foto latar"><ImageInput value={f.hero_image} onChange={set("hero_image")} /></Field>}
+          {slug === "beranda" && <Field label={`Foto section "${f.konten[0]?.judul?.trim() || "Bukan Sekadar Jaringan Usaha"}"`}>
+            <ImageInput value={f.konten[0]?.gambar ?? ""} onChange={(v) => {
+              const k = [...f.konten];
+              if (k[0]) k[0] = { ...k[0], gambar: v };
+              else k[0] = { judul: "Tentang Komunitas", isi: "", gambar: v };
+              setF({ ...f, konten: k });
+            }} />
+          </Field>}
         </div>
         <div className="space-y-3 rounded-lg border border-border bg-card p-5">
           <h2 className="font-bold uppercase tracking-wider">SEO</h2>

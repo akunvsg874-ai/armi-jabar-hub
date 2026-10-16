@@ -228,7 +228,7 @@ function Index() {
             </Link>
           </div>
           <div className="relative">
-            <img src={communityImg} alt="Suasana silaturahmi anggota komunitas rental mobil" loading="lazy" width={1408} height={1008} className="aspect-[4/3] w-full object-cover [clip-path:polygon(0_0,100%_0,100%_88%,88%_100%,0_100%)]" />
+            <img src={h.konten[0]?.gambar?.trim() || communityImg} alt="Suasana silaturahmi anggota komunitas rental mobil" loading="lazy" width={1408} height={1008} className="aspect-[4/3] w-full object-cover [clip-path:polygon(0_0,100%_0,100%_88%,88%_100%,0_100%)]" />
             <img src={logoArmi.url} alt="Logo ARMI" loading="lazy" width={431} height={461} className="absolute -bottom-8 -left-4 h-28 w-auto drop-shadow-xl md:-left-8 md:h-36" />
           </div>
         </div>
