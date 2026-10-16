@@ -52,11 +52,11 @@ function TrxTable({ limit }: { limit: number }) {
     <Table head={["Tanggal", "Kategori", "Sub", "Tipe", "Nominal"]}>
       {data.slice(0, limit).map((t) => (
         <tr key={t.id}>
-          <td className={td}>{formatTanggal(t.tanggal)}</td>
+          <td className={`${td} whitespace-nowrap`}>{formatTanggal(t.tanggal)}</td>
           <td className={td}>{KATEGORI_LABEL[t.kategori]}</td>
           <td className={td}>{t.sub_kategori}</td>
           <td className={td}><TipeBadge tipe={t.tipe} /></td>
-          <td className={`${td} font-semibold`}>{formatRupiah(Number(t.nominal))}</td>
+          <td className={`${td} whitespace-nowrap font-semibold`}>{formatRupiah(Number(t.nominal))}</td>
         </tr>
       ))}
     </Table>
