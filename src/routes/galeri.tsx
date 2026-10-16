@@ -49,7 +49,7 @@ function Page() {
                       <Maximize2 className="h-3.5 w-3.5" /> Lihat Foto
                     </span>
                   </span>
-                  {f.judul && <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 text-sm font-bold uppercase tracking-wider">{f.judul}</figcaption>}
+                  {f.judul && <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 text-sm font-bold uppercase tracking-wider">{f.judul}</span>}
                 </button>
               ))}
             </div>
