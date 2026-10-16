@@ -57,7 +57,7 @@ function Page() {
           <Field label="Label kecil"><input className={inputCls} value={f.hero_eyebrow} onChange={txt("hero_eyebrow")} maxLength={120} /></Field>
           <Field label={slug === "beranda" ? "Judul (kosongkan untuk judul bawaan)" : "Judul"}><input className={inputCls} value={f.hero_title} onChange={txt("hero_title")} maxLength={160} /></Field>
           <Field label="Deskripsi"><textarea className={inputCls} rows={3} value={f.hero_desc} onChange={txt("hero_desc")} maxLength={600} /></Field>
-          {slug !== "beranda" && slug !== "anggota" && <Field label="Foto latar"><ImageInput value={f.hero_image} onChange={set("hero_image")} /></Field>}
+          {slug !== "anggota" && <Field label="Foto latar"><ImageInput value={f.hero_image} onChange={set("hero_image")} /></Field>}
         </div>
         <div className="space-y-3 rounded-lg border border-border bg-card p-5">
           <h2 className="font-bold uppercase tracking-wider">SEO</h2>
