@@ -31,7 +31,7 @@ export function TransaksiForm({ initial, nomor, isAdmin, onDone }: { initial?: T
   async function addSub() {
     if (!kategori || !newSub.trim()) return;
     const { error } = await supabase.from("sub_kategori").insert({ kategori, nama: newSub.trim() });
-    if (error) return toast.error("Gagal menambah sub-kategori");
+    if (error) return void toast.error("Gagal menambah sub-kategori");
     await qc.invalidateQueries({ queryKey: ["sub_kategori"] });
     setSub(newSub.trim()); setNewSub(""); setAdding(false);
   }
@@ -40,15 +40,15 @@ export function TransaksiForm({ initial, nomor, isAdmin, onDone }: { initial?: T
     e.preventDefault();
     const n = Number(nominal);
     const v = validateTransaksi({ kategori, nominal: n });
-    if (v) return setErr(v);
-    if (!sub) return setErr("Sub-kategori wajib dipilih");
+    if (v) return void setErr(v);
+    if (!sub) return void setErr("Sub-kategori wajib dipilih");
     setSaving(true);
     const payload = { kategori: kategori as Kategori, sub_kategori: sub, tipe, nominal: n, tanggal, keterangan: ket || null };
     const { error } = initial
       ? await supabase.from("transaksi").update(payload).eq("id", initial.id)
       : await supabase.from("transaksi").insert({ ...payload, input_by: nomor });
     setSaving(false);
-    if (error) return toast.error("Gagal menyimpan transaksi");
+    if (error) return void toast.error("Gagal menyimpan transaksi");
     toast.success("Transaksi tersimpan");
     qc.invalidateQueries({ queryKey: ["transaksi"] });
     onDone();

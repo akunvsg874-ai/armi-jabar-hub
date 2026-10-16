@@ -29,10 +29,10 @@ function Page() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.judul.trim() || !form.lokasi.trim() || !form.deskripsi.trim()) return toast.error("Lengkapi semua data");
+    if (!form.judul.trim() || !form.lokasi.trim() || !form.deskripsi.trim()) return void toast.error("Lengkapi semua data");
     const payload = { ...form, foto: form.foto || FOTO_KEGIATAN };
     const { error } = editing ? await supabase.from("kegiatan").update(payload).eq("id", editing.id) : await supabase.from("kegiatan").insert(payload);
-    if (error) return toast.error("Gagal menyimpan");
+    if (error) return void toast.error("Gagal menyimpan");
     toast.success("Kegiatan tersimpan"); setOpen(false); qc.invalidateQueries({ queryKey: ["kegiatan"] });
   }
 

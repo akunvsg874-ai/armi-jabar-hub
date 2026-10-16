@@ -52,7 +52,7 @@ function Page() {
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nama_lengkap.trim() || !form.no_hp.trim() || !form.nama_usaha.trim()) return toast.error("Lengkapi semua data");
+    if (!form.nama_lengkap.trim() || !form.no_hp.trim() || !form.nama_usaha.trim()) return void toast.error("Lengkapi semua data");
     setSaving(true);
     try {
       if (editing) { await update({ data: { ...form, id: editing.id } as never }); toast.success("Anggota diperbarui"); }

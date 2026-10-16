@@ -76,10 +76,10 @@ function AdminView({ nomor }: { nomor: string }) {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nama_konsumen.trim() || !form.keterangan.trim()) return toast.error("Nama dan keterangan wajib diisi");
+    if (!form.nama_konsumen.trim() || !form.keterangan.trim()) return void toast.error("Nama dan keterangan wajib diisi");
     const payload = { ...form, nik: form.nik || null, no_hp_konsumen: form.no_hp_konsumen || null };
     const { error } = editing ? await supabase.from("blacklist").update(payload).eq("id", editing.id) : await supabase.from("blacklist").insert({ ...payload, input_by: nomor });
-    if (error) return toast.error("Gagal menyimpan");
+    if (error) return void toast.error("Gagal menyimpan");
     toast.success("Tersimpan"); setOpen(false); qc.invalidateQueries({ queryKey: ["blacklist-admin"] });
   }
 
