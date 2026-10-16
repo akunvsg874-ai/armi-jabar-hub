@@ -5,7 +5,13 @@ import { generatePassword, nomorToEmail, WILAYAH_JABAR } from "./armi";
 
 const base = z.object({
   nama_lengkap: z.string().trim().min(1).max(100),
-  no_hp: z.string().trim().min(6).max(20),
+  no_hp: z.string().trim().max(20).default(""),
+  no_anggota: z.string().trim().max(40).nullable().default(null),
+  ktp_path: z.string().max(300).nullable().default(null),
+  garasi_path: z.string().max(300).nullable().default(null),
+  maps_url: z.string().trim().max(500).refine((v) => !v || /^https?:\/\//.test(v), "Link Google Maps tidak valid").nullable().default(null),
+  nib: z.string().trim().max(40).nullable().default(null),
+  unit: z.array(z.string().trim().min(1).max(120)).max(500).default([]),
   wilayah: z.enum(WILAYAH_JABAR),
   nama_usaha: z.string().trim().min(1).max(100),
   status: z.enum(["aktif", "non_aktif"]),
