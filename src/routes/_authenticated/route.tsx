@@ -75,7 +75,7 @@ function PortalLayout() {
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar p-4 transition-transform lg:static lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <Link to="/" className="mb-6 flex items-center gap-3">
           <img src={LOGO_URL} alt="Logo ARMI" width={40} height={40} className="h-10 w-10 rounded-lg" />
-          <span className="font-display text-lg font-black italic">ARMI <span className="text-primary">JABAR</span></span>
+          <span className="font-display text-lg font-black">ARMI <span className="text-primary">JABAR</span></span>
         </Link>
         <div className="mb-4 rounded-lg border border-sidebar-border bg-background/40 p-3">
           <div className="truncate text-sm font-bold">{me.nama_lengkap}</div>
@@ -91,7 +91,7 @@ function PortalLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur lg:hidden">
           <button onClick={() => setOpen(!open)} aria-label="Menu">{open ? <X /> : <Menu />}</button>
-          <span className="font-display font-black italic">ARMI <span className="text-primary">JABAR</span></span>
+          <span className="font-display font-black">ARMI <span className="text-primary">JABAR</span></span>
         </header>
         <div className="h-1 racing-stripe opacity-60" />
         <main className="flex-1 p-4 md:p-8"><Outlet /></main>

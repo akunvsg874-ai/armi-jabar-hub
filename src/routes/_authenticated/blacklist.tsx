@@ -45,7 +45,7 @@ function SearchView() {
         <div className="grid gap-3 md:grid-cols-2">
           {data.map((b) => (
             <div key={b.id} className="rounded-xl border border-destructive/40 bg-card p-4">
-              <div className="flex justify-between gap-2"><span className="font-extrabold uppercase">{b.nama_konsumen}</span><span className="text-xs text-muted-foreground">{b.wilayah}</span></div>
+              <div className="flex justify-between gap-2"><span className="font-bold">{b.nama_konsumen}</span><span className="text-xs text-muted-foreground">{b.wilayah}</span></div>
               <p className="mt-1 text-sm text-muted-foreground">{b.keterangan}</p>
             </div>
           ))}

@@ -10,7 +10,7 @@ export function PageTitle({ title, desc, action }: { title: string; desc?: strin
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-black uppercase italic md:text-4xl">{title}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h1>
         {desc && <p className="text-sm text-muted-foreground">{desc}</p>}
       </div>
       {action}
@@ -45,7 +45,7 @@ export function Modal({ open, onOpenChange, title, children }: { open: boolean; 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-card">
-        <DialogHeader><DialogTitle className="font-display text-2xl font-black uppercase">{title}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="font-display text-2xl font-extrabold tracking-tight">{title}</DialogTitle></DialogHeader>
         {children}
       </DialogContent>
     </Dialog>

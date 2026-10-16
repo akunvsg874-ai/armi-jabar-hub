@@ -24,7 +24,7 @@ export function KegiatanCard({ k, actions }: { k: Kegiatan; actions?: React.Reac
         <div className="absolute left-3 top-3"><JenisBadge jenis={k.jenis} /></div>
       </div>
       <div className="space-y-2 p-5">
-        <h3 className="text-xl font-extrabold uppercase leading-tight">{k.judul}</h3>
+        <h3 className="text-xl font-bold leading-tight">{k.judul}</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-primary" />{formatTanggal(k.tanggal)}</span>
           <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-primary" />{k.lokasi}</span>
@@ -51,7 +51,7 @@ export function ProgramCards() {
           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 text-primary">
             <p.icon className="h-6 w-6" />
           </div>
-          <h3 className="text-xl font-extrabold uppercase">{p.title}</h3>
+          <h3 className="text-xl font-bold">{p.title}</h3>
           <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
         </div>
       ))}
