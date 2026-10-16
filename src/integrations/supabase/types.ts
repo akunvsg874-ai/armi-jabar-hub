@@ -220,34 +220,52 @@ export type Database = {
       }
       kegiatan: {
         Row: {
+          alamat: string | null
           created_at: string
           deskripsi: string
+          dokumentasi: Json
           foto: string
           id: string
           jenis: Database["public"]["Enums"]["jenis_kegiatan"]
           judul: string
           lokasi: string
+          maps_url: string | null
+          narahubung: string | null
+          penyelenggara: string | null
           tanggal: string
+          waktu: string | null
         }
         Insert: {
+          alamat?: string | null
           created_at?: string
           deskripsi: string
+          dokumentasi?: Json
           foto?: string
           id?: string
           jenis: Database["public"]["Enums"]["jenis_kegiatan"]
           judul: string
           lokasi: string
+          maps_url?: string | null
+          narahubung?: string | null
+          penyelenggara?: string | null
           tanggal: string
+          waktu?: string | null
         }
         Update: {
+          alamat?: string | null
           created_at?: string
           deskripsi?: string
+          dokumentasi?: Json
           foto?: string
           id?: string
           jenis?: Database["public"]["Enums"]["jenis_kegiatan"]
           judul?: string
           lokasi?: string
+          maps_url?: string | null
+          narahubung?: string | null
+          penyelenggara?: string | null
           tanggal?: string
+          waktu?: string | null
         }
         Relationships: []
       }
