@@ -1,18 +1,57 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import logoDpd from "@/assets/logo-dpd-jabar.png.asset.json";
 import logoArmi from "@/assets/logo-armi.png.asset.json";
 
 export { logoArmi, logoDpd };
 
-const NAV = [
+type NavLink = { to: "/" | "/tentang" | "/galeri" | "/anggota" | "/gabung" | "/agenda" | "/jadwal-eksekusi" | "/artikel" | "/kontak"; label: string };
+type NavItem = NavLink | { label: string; children: NavLink[] };
+
+const NAV_TREE: NavItem[] = [
   { to: "/", label: "Beranda" },
   { to: "/tentang", label: "Tentang Kami" },
-  { to: "/anggota", label: "Cari Anggota" },
-  { to: "/info-kegiatan", label: "Kegiatan" },
+  { label: "Komunitas", children: [
+    { to: "/galeri", label: "Galeri" },
+    { to: "/anggota", label: "Cari Anggota" },
+    { to: "/gabung", label: "Gabung Menjadi Anggota" },
+  ] },
+  { label: "Kegiatan", children: [
+    { to: "/agenda", label: "Agenda" },
+    { to: "/jadwal-eksekusi", label: "Jadwal Eksekusi" },
+  ] },
+  { to: "/artikel", label: "Artikel" },
   { to: "/kontak", label: "Kontak" },
-] as const;
+];
+const NAV: NavLink[] = NAV_TREE.flatMap((n) => ("children" in n ? n.children : [n]));
+
+const topCls = "relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground";
+
+function DesktopNav() {
+  return (
+    <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
+      {NAV_TREE.map((n) => "children" in n ? (
+        <div key={n.label} className="group relative">
+          <button type="button" className={`${topCls} inline-flex items-center gap-1`} aria-haspopup="true">
+            {n.label}<ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
+          </button>
+          <div className="invisible absolute left-1/2 top-full z-50 min-w-56 -translate-x-1/2 rounded-md border border-border bg-background p-2 opacity-0 shadow-lg transition-all group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+            {n.children.map((c) => (
+              <Link key={c.to} to={c.to} className="block rounded px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/70 hover:bg-card hover:text-primary"
+                activeProps={{ className: "!text-primary" }}>{c.label}</Link>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Link key={n.to} to={n.to} activeOptions={{ exact: true }} className={topCls}
+          activeProps={{ className: "after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary !text-primary" }}>
+          {n.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
 
 /** Official ARMI DPD Jawa Barat logo. */
 export function LogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
