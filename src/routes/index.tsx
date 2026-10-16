@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { KegiatanDetail } from "@/components/site/KegiatanDetail";
 import { Lightbox } from "@/components/site/Lightbox";
 import type { Kegiatan } from "@/components/site/shared";
@@ -37,14 +37,44 @@ const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 tex
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
 /** Hero background: wide photos fill the area; small/square images (e.g. logos) become an elegant centered emblem. */
-/** Default hero backdrop: ARMI + DPD Jabar logos side by side as a soft watermark. */
+/** Default hero backdrop: ARMI + DPD Jabar logos side by side as a soft watermark.
+ * On scroll the logos glide up, then hold still (pinned) while the rest of the page moves. */
 function LogoBg() {
+  const row = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = row.current;
+    if (!el) return;
+    const host = el.offsetParent as HTMLElement | null;
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const h = host?.offsetHeight ?? 900;
+      const lift = Math.min(y * 0.32, 150);
+      el.style.transform = `translate3d(0, ${Math.min(y, h) - lift}px, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute left-1/2 top-1/2 h-[520px] w-[1100px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
-      <div className="absolute inset-0 flex items-center justify-between px-0">
-        <img src={logoArmi.url} alt="" className="-ml-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-ml-20" />
-        <img src={logoDpd.url} alt="" className="-mr-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-mr-20" />
+      <div ref={row} className="absolute inset-0 will-change-transform">
+        <div className="absolute left-1/2 top-1/2 h-[520px] w-[1100px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
+        <div className="absolute inset-0 flex items-center justify-between px-0">
+          <img src={logoArmi.url} alt="" className="-ml-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-ml-20" />
+          <img src={logoDpd.url} alt="" className="-mr-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-mr-20" />
+        </div>
       </div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_72%,var(--background)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
