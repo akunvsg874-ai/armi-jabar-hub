@@ -80,7 +80,7 @@ function Page() {
 
   async function openAdd() {
     setEditing(null); setForm(empty); setOpen(true);
-    const { data } = await supabase.rpc("peek_nomor_anggota"); setPreview(data ?? "");
+    setPreview("");
   }
   function openEdit(a: Me) {
     setEditing(a); setPreview(a.nomor_anggota);
@@ -95,7 +95,8 @@ function Page() {
     if (!form.nama_lengkap.trim() || !form.nama_usaha.trim()) return void toast.error("Nama lengkap dan nama garasi wajib diisi");
     if (form.maps_url && !/^https?:\/\//.test(form.maps_url.trim())) return void toast.error("Link Google Maps harus diawali https://");
     const payload = { ...form, no_anggota: form.no_anggota.trim() || null, maps_url: form.maps_url.trim() || null, nib: form.nib.trim() || null,
-      unit: form.unit.map((u) => u.trim()).filter(Boolean), no_hp: editing?.no_hp ?? "" };
+      unit: form.unit.map((u) => u.trim()).filter(Boolean), no_hp: preview.trim(), nomor_login: preview.trim() };
+    if (!/^(\d{9,15}|ARMI-JBR-\d{4})$/.test(payload.nomor_login)) return void toast.error("Nomor HP login harus 9–15 angka, contoh 081234567890");
     setSaving(true);
     try {
       if (editing) { await update({ data: { ...payload, id: editing.id } as never }); toast.success("Anggota diperbarui"); }
@@ -142,7 +143,7 @@ function Page() {
 
       <Modal open={open} onOpenChange={setOpen} title={editing ? "Edit Anggota" : "Tambah Anggota"}>
         <form onSubmit={submit} className="max-h-[75vh] space-y-3 overflow-y-auto pr-1">
-          <Field label="Nomor Login Anggota (otomatis)"><input className={`${inputCls} opacity-70`} value={preview} readOnly /></Field>
+          <Field label="Nomor HP (dipakai untuk login)"><input className={inputCls} inputMode="numeric" placeholder="081234567890" value={preview} onChange={(e) => setPreview(e.target.value.replace(/[^0-9A-Za-z-]/g, "").toUpperCase())} /></Field>
           <Field label="Nama Lengkap"><input className={inputCls} value={form.nama_lengkap} onChange={set("nama_lengkap")} maxLength={100} placeholder="Iyus Abdurrahman" /></Field>
           <Field label="No. Anggota"><input className={inputCls} value={form.no_anggota} onChange={set("no_anggota")} maxLength={40} placeholder="05.2024.06.06.0122" /></Field>
           <Field label="KTP / SIM"><DocUpload label="Upload KTP" value={form.ktp_path} onChange={(p) => setForm({ ...form, ktp_path: p })} prefix="ktp" /></Field>

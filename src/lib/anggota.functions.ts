@@ -16,7 +16,15 @@ const base = z.object({
   nama_usaha: z.string().trim().min(1).max(100),
   status: z.enum(["aktif", "non_aktif"]),
   role: z.enum(["admin", "bendahara", "anggota"]),
+  nomor_login: z.string().trim().regex(/^(\d{9,15}|ARMI-JBR-\d{4})$/, "Nomor HP login harus 9–15 angka"),
 });
+
+async function assertNomorFree(admin: any, nomor: string, exceptId?: string) {
+  let q = admin.from("anggota").select("id").eq("nomor_anggota", nomor);
+  if (exceptId) q = q.neq("id", exceptId);
+  const { data } = await q;
+  if (data?.length) throw new Error("Nomor HP sudah dipakai anggota lain");
+}
 
 async function assertAdmin(ctx: { supabase: any; userId: string }) {
   const { data } = await ctx.supabase.rpc("has_role", { _user_id: ctx.userId, _role: "admin" });
@@ -30,15 +38,15 @@ export const createAnggota = createServerFn({ method: "POST" })
   .inputValidator((d) => base.parse(d))
   .handler(async ({ data, context }) => {
     const admin = await assertAdmin(context);
-    const { data: nomor, error: e1 } = await admin.rpc("next_nomor_anggota");
-    if (e1 || !nomor) throw new Error("Gagal membuat nomor anggota");
+    const { nomor_login: nomor, ...fields } = data;
+    await assertNomorFree(admin, nomor);
     const password = generatePassword();
     const { data: created, error: e2 } = await admin.auth.admin.createUser({
       email: nomorToEmail(nomor), password, email_confirm: true,
     });
-    if (e2 || !created.user) throw new Error("Gagal membuat akun");
+    if (e2 || !created.user) throw new Error(/already/i.test(e2?.message ?? "") ? "Nomor HP sudah terdaftar" : "Gagal membuat akun");
     const uid = created.user.id;
-    const { error: e3 } = await admin.from("anggota").insert({ ...data, user_id: uid, nomor_anggota: nomor });
+    const { error: e3 } = await admin.from("anggota").insert({ ...fields, no_hp: nomor, user_id: uid, nomor_anggota: nomor });
     if (e3) { await admin.auth.admin.deleteUser(uid); throw new Error("Gagal menyimpan anggota"); }
     await admin.from("user_roles").insert({ user_id: uid, role: data.role });
     return { nomor_anggota: nomor as string, password };
@@ -49,12 +57,17 @@ export const updateAnggota = createServerFn({ method: "POST" })
   .inputValidator((d) => base.extend({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const admin = await assertAdmin(context);
-    const { id, ...rest } = data;
-    const { data: row } = await admin.from("anggota").select("user_id").eq("id", id).single();
+    const { id, nomor_login, ...rest } = data;
+    await assertNomorFree(admin, nomor_login, id);
+    const { data: row } = await admin.from("anggota").select("user_id, nomor_anggota").eq("id", id).single();
     if (row?.user_id === context.userId && (rest.status !== "aktif" || rest.role !== "admin")) {
       throw new Error("Anda tidak bisa menonaktifkan atau menurunkan peran akun sendiri");
     }
-    const { error } = await admin.from("anggota").update(rest).eq("id", id);
+    if (row?.user_id && row.nomor_anggota !== nomor_login) {
+      const { error: ee } = await admin.auth.admin.updateUserById(row.user_id, { email: nomorToEmail(nomor_login), email_confirm: true });
+      if (ee) throw new Error("Gagal mengganti nomor login");
+    }
+    const { error } = await admin.from("anggota").update({ ...rest, no_hp: nomor_login, nomor_anggota: nomor_login }).eq("id", id);
     if (error) throw new Error("Gagal memperbarui anggota");
     if (row?.user_id) {
       await admin.from("user_roles").delete().eq("user_id", row.user_id);

@@ -59,8 +59,8 @@ function Login() {
         </div>
         <div className="mt-8 space-y-4">
           <div>
-            <label className="text-sm font-semibold" htmlFor="nomor">Nomor Anggota</label>
-            <input id="nomor" autoComplete="username" value={nomor} onChange={(e) => setNomor(e.target.value.toUpperCase())} placeholder="ARMI-JBR-0001" className={input} />
+            <label className="text-sm font-semibold" htmlFor="nomor">Nomor HP / Nomor Anggota</label>
+            <input id="nomor" autoComplete="username" value={nomor} onChange={(e) => setNomor(e.target.value.toUpperCase())} placeholder="081234567890" className={input} />
           </div>
           <div>
             <label className="text-sm font-semibold" htmlFor="pw">Password</label>
