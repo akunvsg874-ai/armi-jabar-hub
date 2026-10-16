@@ -37,6 +37,21 @@ const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 tex
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
 /** Hero background: wide photos fill the area; small/square images (e.g. logos) become an elegant centered emblem. */
+/** Default hero backdrop: ARMI + DPD Jabar logos side by side as a soft watermark. */
+function LogoBg() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute left-1/2 top-1/2 h-[520px] w-[1100px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
+      <div className="absolute inset-0 flex items-center justify-center gap-16 px-6 md:gap-28 lg:gap-40">
+        <img src={logoArmi.url} alt="" className="h-[38vh] max-h-[460px] min-h-[180px] w-auto opacity-[0.10] saturate-50" />
+        <img src={logoDpd.url} alt="" className="h-[38vh] max-h-[460px] min-h-[180px] w-auto opacity-[0.10] saturate-50" />
+      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--background)_85%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+    </div>
+  );
+}
+
 function HeroBg({ src }: { src: string }) {
   const [emblem, setEmblem] = useState<boolean | null>(null);
   useEffect(() => {
@@ -46,13 +61,7 @@ function HeroBg({ src }: { src: string }) {
   }, [src]);
   return (
     <div aria-hidden className="absolute inset-0">
-      {emblem ? (
-        <>
-          <img src={src} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-20 blur-3xl" />
-          <img src={src} alt="" className="absolute left-1/2 top-1/2 h-[70%] max-h-[560px] w-auto -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.12]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background" />
-        </>
-      ) : (
+      {emblem ? null : (
         <>
           <img src={src} alt=""
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${emblem === false ? "opacity-100" : "opacity-0"}`} />
@@ -96,21 +105,12 @@ function Index() {
     <PublicLayout overlay>
       {/* HERO */}
       <section className="relative overflow-hidden">
+        <LogoBg />
         {h.hero_image && (<>
           <HeroBg src={h.hero_image} />
         </>)}
         <div aria-hidden className="absolute inset-0 bg-radial-glow" />
-        <img src={logoArmi.url} alt="" aria-hidden width={431} height={461} className="pointer-events-none absolute left-1/2 top-24 w-[720px] max-w-[95vw] -translate-x-1/2 opacity-[0.05] grayscale" />
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] mx-auto hidden max-w-[1400px] -translate-y-1/2 items-center justify-between px-10 xl:flex 2xl:px-16">
-          <img src={logoArmi.url} alt="" width={431} height={461} className="h-44 w-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] 2xl:h-52" />
-          <img src={logoDpd.url} alt="" className="h-44 w-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] 2xl:h-52" />
-        </div>
-        <div className="mb-0 flex items-center justify-center gap-6 pt-28 xl:hidden">
-          <img src={logoArmi.url} alt="Logo ARMI" className="relative h-16 w-auto md:h-20" />
-          <span className="relative h-10 w-px bg-border" />
-          <img src={logoDpd.url} alt="Logo DPD ARMI Jawa Barat" className="relative h-16 w-auto md:h-20" />
-        </div>
-        <div className="relative mx-auto max-w-5xl px-5 pb-20 pt-8 xl:pt-36 text-center md:pb-28 md:pt-10 xl:pt-44">
+        <div className="relative mx-auto max-w-5xl px-5 pb-20 pt-36 text-center md:pb-28 md:pt-44">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/80">
             <Shield className="h-3.5 w-3.5 text-primary" /> {h.hero_eyebrow}
           </span>
