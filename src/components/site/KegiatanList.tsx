@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { PublicLayout, PageHero } from "@/components/site/PublicLayout";
 import { KegiatanCard, EmptyState } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";

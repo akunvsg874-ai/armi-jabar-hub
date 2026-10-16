@@ -7,19 +7,15 @@ import { JenisBadge, StatusBadge } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { WILAYAH_JABAR, todayISO } from "@/lib/armi";
+import { halamanQuery, seoMeta } from "@/lib/cms";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import heroImg from "@/assets/hero-cars.jpg";
 import convoyImg from "@/assets/convoy.jpg";
 import communityImg from "@/assets/community.jpg";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "ARMI DPD Jawa Barat — Satu Jaringan, Satu Semangat" },
-      { name: "description", content: "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas." },
-      { property: "og:title", content: "ARMI DPD Jawa Barat" },
-      { property: "og:description", content: "Satu jaringan. Satu semangat. Tumbuh bersama." },
-    ],
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(halamanQuery("beranda")),
+  head: ({ loaderData }) => seoMeta(loaderData, "beranda"),
   component: Index,
 });
 
@@ -38,6 +34,7 @@ const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 tex
 const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
 function Index() {
+  const { data: h } = useSuspenseQuery(halamanQuery("beranda"));
   const { data: kegiatan = [] } = useQuery(kegiatanQuery);
   const { data: anggota = [] } = useQuery({
     queryKey: ["cari-anggota", ""],
@@ -66,13 +63,13 @@ function Index() {
         <img src={logoArmi.url} alt="" aria-hidden width={431} height={461} className="pointer-events-none absolute left-1/2 top-24 w-[720px] max-w-[95vw] -translate-x-1/2 opacity-[0.05] grayscale" />
         <div className="relative mx-auto max-w-5xl px-5 pb-20 pt-36 text-center md:pb-28 md:pt-44">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/80">
-            <Shield className="h-3.5 w-3.5 text-primary" /> Wadah Resmi Pengusaha Rental Mobil Jawa Barat
+            <Shield className="h-3.5 w-3.5 text-primary" /> {h.hero_eyebrow}
           </span>
           <h1 className="mt-8 text-5xl font-black uppercase leading-[1] sm:text-6xl lg:text-[84px]">
-            Satu Jaringan. <span className="text-primary">Satu Semangat.</span><br />Tumbuh <span className="text-muted-foreground">Bersama.</span>
+            {h.hero_title ? h.hero_title : <>Satu Jaringan. <span className="text-primary">Satu Semangat.</span><br />Tumbuh <span className="text-muted-foreground">Bersama.</span></>}
           </h1>
           <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.
+            {h.hero_desc}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link to="/login" className={btnP}>Masuk Portal</Link>
@@ -161,7 +158,7 @@ function Index() {
               <p className="mt-2 -rotate-2 font-script text-2xl text-primary">Lebih dari sekadar komunitas</p>
               <p className="mt-4 text-muted-foreground">Dokumentasi kegiatan, pertemuan, dan momen kebersamaan anggota ARMI Jawa Barat.</p>
             </div>
-            <Link to="/info-kegiatan" className={btnS}>Lihat Semua Kegiatan</Link>
+            <Link to="/agenda" className={btnS}>Lihat Semua Kegiatan</Link>
           </div>
           <div className="mt-12 grid gap-3 md:grid-cols-3 md:grid-rows-2">
             {gallery.map((g, i) => (
@@ -197,7 +194,7 @@ function Index() {
             );
           }) : (
             <div className="py-12 text-center text-muted-foreground">
-              Belum ada agenda mendatang. <Link to="/info-kegiatan" className="text-primary">Lihat arsip kegiatan →</Link>
+              Belum ada agenda mendatang. <Link to="/agenda" className="text-primary">Lihat arsip kegiatan →</Link>
             </div>
           )}
         </div>

@@ -11,8 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as AnggotaRouteImport } from './routes/anggota'
+import { Route as GaleriRouteImport } from './routes/galeri'
 import { Route as InfoKegiatanRouteImport } from './routes/info-kegiatan'
+import { Route as JadwalEksekusiRouteImport } from './routes/jadwal-eksekusi'
 import { Route as KontakRouteImport } from './routes/kontak'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as TentangRouteImport } from './routes/tentang'
@@ -21,6 +24,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedKegiatanRouteImport } from './routes/_authenticated/kegiatan'
 import { Route as AuthenticatedKeuanganRouteImport } from './routes/_authenticated/keuangan'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
+import { Route as ArtikelIndexRouteImport } from './routes/artikel.index'
+import { Route as ArtikelSlugRouteImport } from './routes/artikel.$slug'
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 
 const IndexRoute = IndexRouteImport.update({
@@ -32,14 +37,29 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnggotaRoute = AnggotaRouteImport.update({
   id: '/anggota',
   path: '/anggota',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GaleriRoute = GaleriRouteImport.update({
+  id: '/galeri',
+  path: '/galeri',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InfoKegiatanRoute = InfoKegiatanRouteImport.update({
   id: '/info-kegiatan',
   path: '/info-kegiatan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JadwalEksekusiRoute = JadwalEksekusiRouteImport.update({
+  id: '/jadwal-eksekusi',
+  path: '/jadwal-eksekusi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KontakRoute = KontakRouteImport.update({
@@ -82,6 +102,16 @@ const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
   path: '/profil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ArtikelIndexRoute = ArtikelIndexRouteImport.update({
+  id: '/artikel/',
+  path: '/artikel/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtikelSlugRoute = ArtikelSlugRouteImport.update({
+  id: '/artikel/$slug',
+  path: '/artikel/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminAnggotaRoute =
   AuthenticatedAdminAnggotaRouteImport.update({
     id: '/admin/anggota',
@@ -91,8 +121,11 @@ const AuthenticatedAdminAnggotaRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
+  '/jadwal-eksekusi': typeof JadwalEksekusiRoute
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
@@ -101,12 +134,17 @@ export interface FileRoutesByFullPath {
   '/kegiatan': typeof AuthenticatedKegiatanRoute
   '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
+  '/artikel/$slug': typeof ArtikelSlugRoute
+  '/artikel/': typeof ArtikelIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
+  '/jadwal-eksekusi': typeof JadwalEksekusiRoute
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
@@ -115,14 +153,19 @@ export interface FileRoutesByTo {
   '/kegiatan': typeof AuthenticatedKegiatanRoute
   '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
+  '/artikel/$slug': typeof ArtikelSlugRoute
+  '/artikel': typeof ArtikelIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
+  '/jadwal-eksekusi': typeof JadwalEksekusiRoute
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
@@ -131,14 +174,19 @@ export interface FileRoutesById {
   '/_authenticated/kegiatan': typeof AuthenticatedKegiatanRoute
   '/_authenticated/keuangan': typeof AuthenticatedKeuanganRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
+  '/artikel/$slug': typeof ArtikelSlugRoute
+  '/artikel/': typeof ArtikelIndexRoute
   '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agenda'
     | '/anggota'
+    | '/galeri'
     | '/info-kegiatan'
+    | '/jadwal-eksekusi'
     | '/kontak'
     | '/login'
     | '/tentang'
@@ -147,12 +195,17 @@ export interface FileRouteTypes {
     | '/kegiatan'
     | '/keuangan'
     | '/profil'
+    | '/artikel/$slug'
+    | '/artikel/'
     | '/admin/anggota'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agenda'
     | '/anggota'
+    | '/galeri'
     | '/info-kegiatan'
+    | '/jadwal-eksekusi'
     | '/kontak'
     | '/login'
     | '/tentang'
@@ -161,13 +214,18 @@ export interface FileRouteTypes {
     | '/kegiatan'
     | '/keuangan'
     | '/profil'
+    | '/artikel/$slug'
+    | '/artikel'
     | '/admin/anggota'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/agenda'
     | '/anggota'
+    | '/galeri'
     | '/info-kegiatan'
+    | '/jadwal-eksekusi'
     | '/kontak'
     | '/login'
     | '/tentang'
@@ -176,17 +234,24 @@ export interface FileRouteTypes {
     | '/_authenticated/kegiatan'
     | '/_authenticated/keuangan'
     | '/_authenticated/profil'
+    | '/artikel/$slug'
+    | '/artikel/'
     | '/_authenticated/admin/anggota'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AgendaRoute: typeof AgendaRoute
   AnggotaRoute: typeof AnggotaRoute
+  GaleriRoute: typeof GaleriRoute
   InfoKegiatanRoute: typeof InfoKegiatanRoute
+  JadwalEksekusiRoute: typeof JadwalEksekusiRoute
   KontakRoute: typeof KontakRoute
   LoginRoute: typeof LoginRoute
   TentangRoute: typeof TentangRoute
+  ArtikelSlugRoute: typeof ArtikelSlugRoute
+  ArtikelIndexRoute: typeof ArtikelIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/anggota': {
       id: '/anggota'
       path: '/anggota'
@@ -212,11 +284,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnggotaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/galeri': {
+      id: '/galeri'
+      path: '/galeri'
+      fullPath: '/galeri'
+      preLoaderRoute: typeof GaleriRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/info-kegiatan': {
       id: '/info-kegiatan'
       path: '/info-kegiatan'
       fullPath: '/info-kegiatan'
       preLoaderRoute: typeof InfoKegiatanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jadwal-eksekusi': {
+      id: '/jadwal-eksekusi'
+      path: '/jadwal-eksekusi'
+      fullPath: '/jadwal-eksekusi'
+      preLoaderRoute: typeof JadwalEksekusiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kontak': {
@@ -275,6 +361,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/artikel/': {
+      id: '/artikel/'
+      path: '/artikel'
+      fullPath: '/artikel/'
+      preLoaderRoute: typeof ArtikelIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artikel/$slug': {
+      id: '/artikel/$slug'
+      path: '/artikel/$slug'
+      fullPath: '/artikel/$slug'
+      preLoaderRoute: typeof ArtikelSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/anggota': {
       id: '/_authenticated/admin/anggota'
       path: '/admin/anggota'
@@ -309,11 +409,16 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AgendaRoute: AgendaRoute,
   AnggotaRoute: AnggotaRoute,
+  GaleriRoute: GaleriRoute,
   InfoKegiatanRoute: InfoKegiatanRoute,
+  JadwalEksekusiRoute: JadwalEksekusiRoute,
   KontakRoute: KontakRoute,
   LoginRoute: LoginRoute,
   TentangRoute: TentangRoute,
+  ArtikelSlugRoute: ArtikelSlugRoute,
+  ArtikelIndexRoute: ArtikelIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
