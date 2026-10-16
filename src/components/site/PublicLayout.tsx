@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import logoDpd from "@/assets/logo-dpd-jabar.png.asset.json";
 import logoArmi from "@/assets/logo-armi.png.asset.json";
 
@@ -25,6 +26,23 @@ const NAV_TREE: NavItem[] = [
   { to: "/kontak", label: "Kontak" },
 ];
 const NAV: NavLink[] = NAV_TREE.flatMap((n) => ("children" in n ? n.children : [n]));
+
+function useSignedIn() {
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(!!session));
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return signedIn;
+}
+
+function PortalLink({ className, guest = "Portal Login" }: { className: string; guest?: string }) {
+  const signedIn = useSignedIn();
+  return signedIn
+    ? <Link to="/dashboard" className={className}>Dashboard</Link>
+    : <Link to="/login" className={className}>{guest}</Link>;
+}
 
 const topCls = "relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground";
 
@@ -88,7 +106,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           <Link to="/" aria-label="Beranda ARMI DPD Jabar"><Brand /></Link>
           <DesktopNav />
           <div className="hidden items-center gap-4 lg:flex">
-            <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary hover:text-foreground">Portal Login</Link>
+            <PortalLink className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary hover:text-foreground" />
             <Link to="/gabung" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
@@ -112,7 +130,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
                 {n.label}
               </Link>
             ))}
-            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Portal Login</Link>
+            <PortalLink className="border-b border-border py-3 text-sm font-medium" />
             <Link to="/gabung" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung ARMI</Link>
           </nav>
         )}
@@ -138,7 +156,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
             <ul className="space-y-2 text-sm">
               <li><Link to="/tentang" className="hover:text-primary">Profil & Visi Misi</Link></li>
               <li><Link to="/gabung" className="hover:text-primary">Gabung Menjadi Anggota</Link></li>
-              <li><Link to="/login" className="hover:text-primary">Portal Anggota</Link></li>
+              <li><PortalLink className="hover:text-primary" guest="Portal Anggota" /></li>
             </ul>
           </div>
         </div>
