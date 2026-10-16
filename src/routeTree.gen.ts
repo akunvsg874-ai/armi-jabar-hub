@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AnggotaRouteImport } from './routes/anggota'
 import { Route as InfoKegiatanRouteImport } from './routes/info-kegiatan'
 import { Route as KontakRouteImport } from './routes/kontak'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as TentangRouteImport } from './routes/tentang'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnggotaRoute = AnggotaRouteImport.update({
@@ -46,6 +53,16 @@ const TentangRoute = TentangRouteImport.update({
   path: '/tentang',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +71,8 @@ export interface FileRoutesByFullPath {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profil': typeof AuthenticatedProfilRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,34 +81,58 @@ export interface FileRoutesByTo {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profil': typeof AuthenticatedProfilRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/anggota': typeof AnggotaRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/profil': typeof AuthenticatedProfilRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/anggota' | '/info-kegiatan' | '/kontak' | '/login' | '/tentang'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/anggota' | '/info-kegiatan' | '/kontak' | '/login' | '/tentang'
-  id:
-    | '__root__'
     | '/'
     | '/anggota'
     | '/info-kegiatan'
     | '/kontak'
     | '/login'
     | '/tentang'
+    | '/dashboard'
+    | '/profil'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/anggota'
+    | '/info-kegiatan'
+    | '/kontak'
+    | '/login'
+    | '/tentang'
+    | '/dashboard'
+    | '/profil'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/anggota'
+    | '/info-kegiatan'
+    | '/kontak'
+    | '/login'
+    | '/tentang'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/profil'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AnggotaRoute: typeof AnggotaRoute
   InfoKegiatanRoute: typeof InfoKegiatanRoute
   KontakRoute: typeof KontakRoute
@@ -104,6 +147,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/anggota': {
@@ -141,11 +191,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TentangRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profil': {
+      id: '/_authenticated/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof AuthenticatedProfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProfilRoute: AuthenticatedProfilRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AnggotaRoute: AnggotaRoute,
   InfoKegiatanRoute: InfoKegiatanRoute,
   KontakRoute: KontakRoute,
