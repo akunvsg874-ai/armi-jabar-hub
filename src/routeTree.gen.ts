@@ -16,8 +16,12 @@ import { Route as InfoKegiatanRouteImport } from './routes/info-kegiatan'
 import { Route as KontakRouteImport } from './routes/kontak'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as TentangRouteImport } from './routes/tentang'
+import { Route as AuthenticatedBlacklistRouteImport } from './routes/_authenticated/blacklist'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedKegiatanRouteImport } from './routes/_authenticated/kegiatan'
+import { Route as AuthenticatedKeuanganRouteImport } from './routes/_authenticated/keuangan'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
+import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -53,9 +57,24 @@ const TentangRoute = TentangRouteImport.update({
   path: '/tentang',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedBlacklistRoute = AuthenticatedBlacklistRouteImport.update({
+  id: '/blacklist',
+  path: '/blacklist',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKegiatanRoute = AuthenticatedKegiatanRouteImport.update({
+  id: '/kegiatan',
+  path: '/kegiatan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKeuanganRoute = AuthenticatedKeuanganRouteImport.update({
+  id: '/keuangan',
+  path: '/keuangan',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
@@ -63,6 +82,12 @@ const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
   path: '/profil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminAnggotaRoute =
+  AuthenticatedAdminAnggotaRouteImport.update({
+    id: '/admin/anggota',
+    path: '/admin/anggota',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,8 +96,12 @@ export interface FileRoutesByFullPath {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/blacklist': typeof AuthenticatedBlacklistRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/kegiatan': typeof AuthenticatedKegiatanRoute
+  '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
+  '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,8 +110,12 @@ export interface FileRoutesByTo {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/blacklist': typeof AuthenticatedBlacklistRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/kegiatan': typeof AuthenticatedKegiatanRoute
+  '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
+  '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,8 +126,12 @@ export interface FileRoutesById {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/tentang': typeof TentangRoute
+  '/_authenticated/blacklist': typeof AuthenticatedBlacklistRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/kegiatan': typeof AuthenticatedKegiatanRoute
+  '/_authenticated/keuangan': typeof AuthenticatedKeuanganRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
+  '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,8 +142,12 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/tentang'
+    | '/blacklist'
     | '/dashboard'
+    | '/kegiatan'
+    | '/keuangan'
     | '/profil'
+    | '/admin/anggota'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -115,8 +156,12 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/tentang'
+    | '/blacklist'
     | '/dashboard'
+    | '/kegiatan'
+    | '/keuangan'
     | '/profil'
+    | '/admin/anggota'
   id:
     | '__root__'
     | '/'
@@ -126,8 +171,12 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/tentang'
+    | '/_authenticated/blacklist'
     | '/_authenticated/dashboard'
+    | '/_authenticated/kegiatan'
+    | '/_authenticated/keuangan'
     | '/_authenticated/profil'
+    | '/_authenticated/admin/anggota'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -191,11 +240,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TentangRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/blacklist': {
+      id: '/_authenticated/blacklist'
+      path: '/blacklist'
+      fullPath: '/blacklist'
+      preLoaderRoute: typeof AuthenticatedBlacklistRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kegiatan': {
+      id: '/_authenticated/kegiatan'
+      path: '/kegiatan'
+      fullPath: '/kegiatan'
+      preLoaderRoute: typeof AuthenticatedKegiatanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/keuangan': {
+      id: '/_authenticated/keuangan'
+      path: '/keuangan'
+      fullPath: '/keuangan'
+      preLoaderRoute: typeof AuthenticatedKeuanganRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profil': {
@@ -205,17 +275,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/anggota': {
+      id: '/_authenticated/admin/anggota'
+      path: '/admin/anggota'
+      fullPath: '/admin/anggota'
+      preLoaderRoute: typeof AuthenticatedAdminAnggotaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBlacklistRoute: typeof AuthenticatedBlacklistRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedKegiatanRoute: typeof AuthenticatedKegiatanRoute
+  AuthenticatedKeuanganRoute: typeof AuthenticatedKeuanganRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
+  AuthenticatedAdminAnggotaRoute: typeof AuthenticatedAdminAnggotaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBlacklistRoute: AuthenticatedBlacklistRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedKegiatanRoute: AuthenticatedKegiatanRoute,
+  AuthenticatedKeuanganRoute: AuthenticatedKeuanganRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
+  AuthenticatedAdminAnggotaRoute: AuthenticatedAdminAnggotaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
