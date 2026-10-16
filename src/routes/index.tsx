@@ -49,7 +49,7 @@ function ProgramCard({ n, icon: Icon, title, desc, tag, img }: {
     <article className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-xl border border-border bg-card/50 p-8 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-glow">
       {img && (
         <>
-          <img src={img} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-[0.14] transition-opacity duration-700 group-hover:opacity-30" />
+          <img src={img} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-[0.09] transition-opacity duration-700 group-hover:opacity-25" />
           <div aria-hidden className="absolute inset-0 bg-background/65" />
         </>
       )}
