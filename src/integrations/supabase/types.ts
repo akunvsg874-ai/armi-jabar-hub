@@ -115,33 +115,42 @@ export type Database = {
       }
       blacklist: {
         Row: {
+          bukti: Json
           id: string
           input_by: string
           keterangan: string
           nama_konsumen: string
           nik: string | null
           no_hp_konsumen: string | null
+          riwayat_kasus: Json
           tanggal_input: string
+          tanggal_kejadian: string | null
           wilayah: string
         }
         Insert: {
+          bukti?: Json
           id?: string
           input_by: string
           keterangan: string
           nama_konsumen: string
           nik?: string | null
           no_hp_konsumen?: string | null
+          riwayat_kasus?: Json
           tanggal_input?: string
+          tanggal_kejadian?: string | null
           wilayah: string
         }
         Update: {
+          bukti?: Json
           id?: string
           input_by?: string
           keterangan?: string
           nama_konsumen?: string
           nik?: string | null
           no_hp_konsumen?: string | null
+          riwayat_kasus?: Json
           tanggal_input?: string
+          tanggal_kejadian?: string | null
           wilayah?: string
         }
         Relationships: []
@@ -372,6 +381,21 @@ export type Database = {
           keterangan: string
           nama_konsumen: string
           tanggal_input: string
+          wilayah: string
+        }[]
+      }
+      detail_blacklist: {
+        Args: { _id: string }
+        Returns: {
+          bukti: Json
+          id: string
+          keterangan: string
+          nama_konsumen: string
+          nik: string
+          no_hp_konsumen: string
+          riwayat_kasus: Json
+          tanggal_input: string
+          tanggal_kejadian: string
           wilayah: string
         }[]
       }

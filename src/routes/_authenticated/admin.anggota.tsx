@@ -68,6 +68,7 @@ function Page() {
   const [preview, setPreview] = useState("");
   const [cred, setCred] = useState<{ nomor_anggota: string; password: string } | null>(null);
   const [toDelete, setToDelete] = useState<Me | null>(null);
+  const [viewing, setViewing] = useState<Me | null>(null);
   const [saving, setSaving] = useState(false);
   const create = useServerFn(createAnggota), update = useServerFn(updateAnggota), del = useServerFn(deleteAnggota), reset = useServerFn(resetPassword);
 
@@ -127,6 +128,7 @@ function Page() {
             <td className={`${td} uppercase text-xs font-bold`}>{a.role}</td>
             <td className={td}>
               <div className="flex gap-1">
+                <button className={btnSecondary} onClick={() => setViewing(a)} title="Lihat Data"><Eye className="h-4 w-4" /></button>
                 <button className={btnSecondary} onClick={() => openEdit(a)} title="Edit"><Pencil className="h-4 w-4" /></button>
                 <button className={btnSecondary} title="Reset Password" onClick={async () => {
                   try { setCred(await reset({ data: { id: a.id } })); qc.invalidateQueries({ queryKey: ["anggota-list"] }); } catch (e) { toast.error((e as Error).message); }
@@ -166,6 +168,28 @@ function Page() {
           </div>
           <button disabled={saving} className={`${btnPrimary} w-full`}>{saving ? "Menyimpan…" : "Simpan"}</button>
         </form>
+      </Modal>
+
+      <Modal open={!!viewing} onOpenChange={(o) => !o && setViewing(null)} title="Data Anggota">
+        {viewing && (() => {
+          const r = viewing as Me & { no_anggota: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
+          const unit = Array.isArray(r.unit) ? (r.unit as string[]) : [];
+          const open = async (p: string) => { const { data } = await supabase.storage.from("dokumen").createSignedUrl(p, 120); if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener"); };
+          const rows: [string, React.ReactNode][] = [
+            ["Nomor Login", r.nomor_anggota], ["Nama Lengkap", r.nama_lengkap], ["No. Anggota", r.no_anggota], ["Nama Garasi", r.nama_usaha], ["DPC", r.wilayah],
+            ["Google Maps", r.maps_url ? <a className="text-primary underline" href={r.maps_url} target="_blank" rel="noopener noreferrer">Buka peta</a> : null],
+            ["NIB", r.nib], ["Status", <StatusBadge status={r.status} />], ["Role", r.role.toUpperCase()],
+            ["KTP / SIM", r.ktp_path ? <button className={btnSecondary} onClick={() => open(r.ktp_path!)}><Eye className="h-4 w-4" /> Lihat</button> : null],
+            ["Foto Garasi", r.garasi_path ? <button className={btnSecondary} onClick={() => open(r.garasi_path!)}><Eye className="h-4 w-4" /> Lihat</button> : null],
+          ];
+          return (
+            <div className="max-h-[75vh] space-y-3 overflow-y-auto pr-1 text-sm">
+              {rows.map(([k, v]) => <div key={k}><div className="text-xs uppercase text-muted-foreground">{k}</div><div className="font-medium">{v || "-"}</div></div>)}
+              <div><div className="text-xs uppercase text-muted-foreground">Data Unit ({unit.length})</div>
+                {unit.length ? <ol className="ml-5 list-decimal">{unit.map((u, i) => <li key={i}>{u}</li>)}</ol> : "-"}</div>
+            </div>
+          );
+        })()}
       </Modal>
 
       <Modal open={!!cred} onOpenChange={(o) => !o && setCred(null)} title="Password Akun">
