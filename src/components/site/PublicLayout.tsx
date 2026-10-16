@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import { Menu, X, LogIn } from "lucide-react";
-import { LOGO_URL } from "@/lib/armi";
+import { useEffect, useState, type ReactNode } from "react";
+import { Menu, X } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Beranda" },
@@ -11,59 +10,102 @@ const NAV = [
   { to: "/kontak", label: "Kontak" },
 ] as const;
 
-export function PublicLayout({ children }: { children: ReactNode }) {
+/** Temporary logo mark — replace with the official ARMI asset when available. */
+export function LogoMark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const cls = { sm: "h-8 w-8 text-sm", md: "h-10 w-10 text-base", lg: "h-16 w-16 text-2xl" }[size];
+  return (
+    <span className={`inline-flex ${cls} shrink-0 items-center justify-center rounded-md bg-primary font-extrabold tracking-tight text-primary-foreground`} aria-hidden>
+      A
+    </span>
+  );
+}
+
+export function Brand({ sub = true }: { sub?: boolean }) {
+  return (
+    <span className="flex items-center gap-3">
+      <LogoMark />
+      <span className="leading-tight">
+        <span className="block text-base font-extrabold tracking-tight">ARMI DPD JABAR</span>
+        {sub && <span className="block text-[11px] text-muted-foreground">Anggota Rental Mobil Indonesia</span>}
+      </span>
+    </span>
+  );
+}
+
+export function PublicLayout({ children, overlay = false }: { children: ReactNode; overlay?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 24);
+    on(); window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  const solid = !overlay || scrolled || open;
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-        <div className="h-1 racing-stripe opacity-80" />
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={LOGO_URL} alt="Logo ARMI" width={40} height={40} className="h-10 w-10 rounded-lg" />
-            <span className="font-display text-xl font-black italic tracking-wide">
-              ARMI <span className="text-primary">DPD JABAR</span>
-            </span>
-          </Link>
-          <nav className="hidden items-center gap-1 lg:flex">
+      <header className={`${overlay ? "fixed" : "sticky"} inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${solid ? "border-border bg-background/95 backdrop-blur" : "border-transparent bg-transparent"}`}>
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5">
+          <Link to="/" aria-label="Beranda ARMI DPD Jabar"><Brand /></Link>
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
             {NAV.map((n) => (
               <Link key={n.to} to={n.to} activeOptions={{ exact: true }}
-                className="rounded-md px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
-                activeProps={{ className: "text-primary" }}>
+                className="relative py-5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary" }}>
                 {n.label}
               </Link>
             ))}
           </nav>
-          <div className="hidden items-center gap-2 lg:flex">
-            <Link to="/login" className="inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-semibold hover:border-primary">
-              <LogIn className="h-4 w-4" /> Masuk
-            </Link>
-            <Link to="/kontak" className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-glow hover:bg-primary-dark">
+          <div className="hidden items-center gap-4 lg:flex">
+            <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">Masuk</Link>
+            <Link to="/kontak" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark">
               Gabung Anggota
             </Link>
           </div>
-          <button className="lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
+          <button className="rounded-md p-2 lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Tutup menu" : "Buka menu"} aria-expanded={open}>
             {open ? <X /> : <Menu />}
           </button>
         </div>
         {open && (
-          <nav className="flex flex-col gap-1 border-t border-border px-4 py-3 lg:hidden">
+          <nav className="flex flex-col border-t border-border bg-background px-5 pb-5 pt-2 lg:hidden">
             {NAV.map((n) => (
-              <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm font-semibold">
+              <Link key={n.to} to={n.to} onClick={() => setOpen(false)} activeOptions={{ exact: true }}
+                className="border-b border-border py-3 text-sm font-medium" activeProps={{ className: "text-primary" }}>
                 {n.label}
               </Link>
             ))}
-            <Link to="/login" className="rounded-md px-3 py-2 text-sm font-semibold">Masuk</Link>
-            <Link to="/kontak" className="mt-2 rounded-lg bg-primary px-4 py-2 text-center text-sm font-bold text-primary-foreground">Gabung Anggota</Link>
+            <Link to="/login" className="border-b border-border py-3 text-sm font-medium">Masuk Portal</Link>
+            <Link to="/kontak" className="mt-4 rounded-md bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground">Gabung Anggota</Link>
           </nav>
         )}
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="border-t border-border bg-card">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-8 text-sm text-muted-foreground md:flex-row">
-          <p>© 2026 Dewan Pimpinan Daerah ARMI Jawa Barat</p>
-          <p className="font-display text-base font-bold italic tracking-wide text-primary">
-            Tri Arutala — Kebersamaan, Keamanan, Professionalitas
-          </p>
+      <footer className="border-t border-border bg-background">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
+          <div>
+            <Brand />
+            <p className="mt-4 max-w-sm text-sm text-muted-foreground">
+              Anggota Rental Mobil Indonesia — Dewan Pimpinan Daerah Jawa Barat.
+            </p>
+            <p className="mt-3 text-sm font-semibold text-primary">Tri Arutala — Kebersamaan, Keamanan, Professionalitas</p>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Navigasi</h3>
+            <ul className="space-y-2 text-sm">
+              {NAV.map((n) => <li key={n.to}><Link to={n.to} className="hover:text-primary">{n.label}</Link></li>)}
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Organisasi</h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/tentang" className="hover:text-primary">Profil & Visi Misi</Link></li>
+              <li><Link to="/kontak" className="hover:text-primary">Informasi Keanggotaan</Link></li>
+              <li><Link to="/login" className="hover:text-primary">Portal Anggota</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-border">
+          <p className="mx-auto max-w-7xl px-5 py-5 text-xs text-muted-foreground">© 2026 Dewan Pimpinan Daerah ARMI Jawa Barat</p>
         </div>
       </footer>
     </div>
@@ -72,12 +114,24 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 
 export function PageHeading({ eyebrow, title, desc }: { eyebrow: string; title: string; desc?: string }) {
   return (
-    <div className="mb-10">
-      <span className="skew-tag inline-block bg-primary px-4 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground">
-        {eyebrow}
-      </span>
-      <h1 className="mt-4 text-4xl font-black uppercase md:text-5xl">{title}</h1>
-      {desc && <p className="mt-3 max-w-2xl text-muted-foreground">{desc}</p>}
+    <div className="mb-10 max-w-3xl">
+      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
+      <h1 className="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h1>
+      {desc && <p className="mt-3 text-base text-muted-foreground">{desc}</p>}
     </div>
+  );
+}
+
+export function PageHero({ image, eyebrow, title, desc }: { image: string; eyebrow: string; title: string; desc?: string }) {
+  return (
+    <section className="relative overflow-hidden border-b border-border">
+      <img src={image} alt="" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover opacity-40" />
+      <div className="absolute inset-0 bg-hero-overlay" />
+      <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28">
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
+        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-tight md:text-5xl">{title}</h1>
+        {desc && <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">{desc}</p>}
+      </div>
+    </section>
   );
 }

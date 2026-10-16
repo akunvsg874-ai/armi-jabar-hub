@@ -27,7 +27,7 @@ function Page() {
           desc="Pendaftaran anggota dilakukan melalui sekretariat DPD. Setelah diverifikasi, admin akan membuatkan nomor anggota dan password untuk masuk ke portal." />
         <div className="grid gap-4 md:grid-cols-3">
           {items.map((i) => (
-            <div key={i.label} className="rounded-xl border border-border bg-card p-6">
+            <div key={i.label} className="rounded-lg border border-border bg-card p-6">
               <i.icon className="mb-3 h-6 w-6 text-primary" />
               <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{i.label}</div>
               <div className="mt-1 font-semibold">{i.value}</div>

@@ -52,11 +52,11 @@ function TrxTable({ limit }: { limit: number }) {
     <Table head={["Tanggal", "Kategori", "Sub", "Tipe", "Nominal"]}>
       {data.slice(0, limit).map((t) => (
         <tr key={t.id}>
-          <td className={td}>{formatTanggal(t.tanggal)}</td>
+          <td className={`${td} whitespace-nowrap`}>{formatTanggal(t.tanggal)}</td>
           <td className={td}>{KATEGORI_LABEL[t.kategori]}</td>
           <td className={td}>{t.sub_kategori}</td>
           <td className={td}><TipeBadge tipe={t.tipe} /></td>
-          <td className={`${td} font-semibold`}>{formatRupiah(Number(t.nominal))}</td>
+          <td className={`${td} whitespace-nowrap font-semibold`}>{formatRupiah(Number(t.nominal))}</td>
         </tr>
       ))}
     </Table>
@@ -76,8 +76,8 @@ function AdminDash() {
         <StatCard label="Kegiatan Mendatang" value={keg.filter((k) => k.tanggal >= todayISO()).length} icon={<CalendarDays className="h-5 w-5" />} />
       </div>
       <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-        <section><h2 className="mb-3 text-xl font-extrabold uppercase">5 Transaksi Terbaru</h2><TrxTable limit={5} /></section>
-        <section><h2 className="mb-3 text-xl font-extrabold uppercase">Kegiatan Mendatang</h2><Upcoming limit={3} /></section>
+        <section><h2 className="mb-3 text-xl font-bold">5 Transaksi Terbaru</h2><TrxTable limit={5} /></section>
+        <section><h2 className="mb-3 text-xl font-bold">Kegiatan Mendatang</h2><Upcoming limit={3} /></section>
       </div>
     </div>
   );
@@ -97,16 +97,16 @@ function BendaharaDash({ me }: { me: Me }) {
           const masuk = rows.filter((t) => t.tipe === "pemasukan").reduce((s, t) => s + Number(t.nominal), 0);
           const keluar = rows.filter((t) => t.tipe === "pengeluaran").reduce((s, t) => s + Number(t.nominal), 0);
           return (
-            <div key={k} className="rounded-xl border border-border bg-card p-5">
+            <div key={k} className="rounded-lg border border-border bg-card p-5">
               <div className="text-xs font-bold uppercase tracking-widest text-primary">{KATEGORI_LABEL[k]}</div>
               <div className="mt-3 flex items-center gap-2 text-sm text-success"><TrendingUp className="h-4 w-4" />{formatRupiah(masuk)}</div>
               <div className="flex items-center gap-2 text-sm text-destructive"><TrendingDown className="h-4 w-4" />{formatRupiah(keluar)}</div>
-              <div className="mt-2 font-display text-2xl font-black">{formatRupiah(masuk - keluar)}</div>
+              <div className="mt-2 text-2xl font-extrabold tracking-tight">{formatRupiah(masuk - keluar)}</div>
             </div>
           );
         })}
       </div>
-      <section><h2 className="mb-3 text-xl font-extrabold uppercase">10 Transaksi Terbaru</h2><TrxTable limit={10} /></section>
+      <section><h2 className="mb-3 text-xl font-bold">10 Transaksi Terbaru</h2><TrxTable limit={10} /></section>
       <Modal open={open} onOpenChange={setOpen} title="Tambah Transaksi">
         <TransaksiForm nomor={me.nomor_anggota} isAdmin={false} onDone={() => setOpen(false)} />
       </Modal>
@@ -124,11 +124,11 @@ function AnggotaDash({ me }: { me: Me }) {
   });
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_1.4fr]">
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="flex items-center gap-4">
-          <img src={FOTO_PROFIL} alt="Foto profil" width={80} height={80} className="h-20 w-20 rounded-xl" />
+          <img src={FOTO_PROFIL} alt="Foto profil" width={80} height={80} className="h-20 w-20 rounded-lg" />
           <div>
-            <div className="text-xl font-extrabold uppercase">{me.nama_lengkap}</div>
+            <div className="text-xl font-bold">{me.nama_lengkap}</div>
             <div className="text-sm text-muted-foreground">{me.nomor_anggota}</div>
             <div className="mt-1"><StatusBadge status={me.status} /></div>
           </div>
@@ -139,8 +139,8 @@ function AnggotaDash({ me }: { me: Me }) {
         </dl>
       </div>
       <div className="space-y-6">
-        <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-3 text-xl font-extrabold uppercase">Cek Blacklist Cepat</h2>
+        <section className="rounded-lg border border-border bg-card p-6">
+          <h2 className="mb-3 text-xl font-bold">Cek Blacklist Cepat</h2>
           <form onSubmit={(e) => { e.preventDefault(); setTerm(q.trim()); }} className="flex gap-2">
             <input className={inputCls} placeholder="Nama / NIK / wilayah" value={q} onChange={(e) => setQ(e.target.value)} />
             <button className={btnPrimary}><Search className="h-4 w-4" /></button>
@@ -157,7 +157,7 @@ function AnggotaDash({ me }: { me: Me }) {
             </div>
           )}
         </section>
-        <section><h2 className="mb-3 text-xl font-extrabold uppercase">Kegiatan Mendatang</h2><Upcoming limit={5} /></section>
+        <section><h2 className="mb-3 text-xl font-bold">Kegiatan Mendatang</h2><Upcoming limit={5} /></section>
       </div>
     </div>
   );

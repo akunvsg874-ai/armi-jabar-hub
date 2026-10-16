@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Search, Building2, MapPin } from "lucide-react";
+import { Search, Building2, MapPin, X } from "lucide-react";
 import { PublicLayout, PageHeading } from "@/components/site/PublicLayout";
-import { StatusBadge, EmptyState } from "@/components/site/shared";
+import { StatusBadge } from "@/components/site/shared";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/anggota")({
@@ -37,14 +37,14 @@ function Page() {
         <div className="relative mb-8 max-w-xl">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama, nama usaha, atau wilayah…"
-            className="w-full rounded-lg border border-input bg-card py-3 pl-12 pr-4 outline-none focus:border-primary" />
+            className="w-full rounded-md border border-input bg-card py-3 pl-12 pr-4 outline-none focus:border-primary" />
         </div>
         {isLoading ? <p className="text-muted-foreground">Mencari…</p> : data && data.length ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {data.map((a) => (
-              <div key={a.nomor_anggota} className="rounded-xl border border-border bg-card p-5">
+              <div key={a.nomor_anggota} className="rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary/60">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-xl font-extrabold uppercase">{a.nama_lengkap}</h3>
+                  <h3 className="text-lg font-bold">{a.nama_lengkap}</h3>
                   <StatusBadge status={a.status} />
                 </div>
                 <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground"><Building2 className="h-4 w-4 text-primary" />{a.nama_usaha}</p>
@@ -52,7 +52,12 @@ function Page() {
               </div>
             ))}
           </div>
-        ) : <EmptyState text="Tidak ada anggota ditemukan" />}
+        ) : (
+          <div className="rounded-lg border border-dashed border-border p-12 text-center">
+            <p className="font-semibold">Tidak ada anggota ditemukan</p>
+            {q && <button onClick={() => setQ("")} className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-input px-4 py-2 text-sm hover:border-foreground"><X className="h-4 w-4" /> Reset pencarian</button>}
+          </div>
+        )}
       </section>
     </PublicLayout>
   );
