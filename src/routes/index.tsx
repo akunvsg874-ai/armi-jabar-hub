@@ -42,11 +42,11 @@ function LogoBg() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <div className="absolute left-1/2 top-1/2 h-[520px] w-[1100px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
-      <div className="absolute inset-0 flex items-center justify-between gap-6 px-2 md:px-6 lg:px-12">
-        <img src={logoArmi.url} alt="" className="h-[62vh] max-h-[760px] min-h-[260px] w-auto opacity-[0.13] saturate-50" />
-        <img src={logoDpd.url} alt="" className="h-[62vh] max-h-[760px] min-h-[260px] w-auto opacity-[0.13] saturate-50" />
+      <div className="absolute inset-0 flex items-center justify-between px-0">
+        <img src={logoArmi.url} alt="" className="-ml-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-ml-20" />
+        <img src={logoDpd.url} alt="" className="-mr-10 h-[68vh] max-h-[820px] min-h-[300px] w-auto opacity-[0.14] saturate-50 md:-mr-20" />
       </div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,var(--background)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_72%,var(--background)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
     </div>
   );
