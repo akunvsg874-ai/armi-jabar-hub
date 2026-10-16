@@ -31,9 +31,6 @@ function Page() {
       <section className="mx-auto max-w-7xl px-5 py-16">
         {foto.length ? (
           <>
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              <span className="text-primary">— </span>Klik foto untuk melihat ukuran penuh
-            </p>
             <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
               {foto.map((f, i) => (
                 <button
