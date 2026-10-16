@@ -1,1 +1,1 @@
-- [ ] Hero beranda: logo ARMI & DPD kiri-kanan
+- [x] Hero beranda: logo ARMI & DPD kiri-kanan
