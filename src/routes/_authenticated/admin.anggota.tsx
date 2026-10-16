@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { Plus, Pencil, Trash2, KeyRound, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, KeyRound, Copy, Upload, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 import { anggotaListQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,8 +19,44 @@ export const Route = createFileRoute("/_authenticated/admin/anggota")({
   component: Page,
 });
 
-type Form = { nama_lengkap: string; no_hp: string; wilayah: string; nama_usaha: string; status: "aktif" | "non_aktif"; role: "admin" | "bendahara" | "anggota" };
-const empty: Form = { nama_lengkap: "", no_hp: "", wilayah: "Kota Bandung", nama_usaha: "", status: "aktif", role: "anggota" };
+type Form = {
+  nama_lengkap: string; no_anggota: string; wilayah: string; nama_usaha: string; maps_url: string; nib: string;
+  ktp_path: string | null; garasi_path: string | null; unit: string[];
+  status: "aktif" | "non_aktif"; role: "admin" | "bendahara" | "anggota";
+};
+const empty: Form = { nama_lengkap: "", no_anggota: "", wilayah: "Kota Bandung", nama_usaha: "", maps_url: "", nib: "", ktp_path: null, garasi_path: null, unit: [""], status: "aktif", role: "anggota" };
+
+/** Uploads a private document (KTP / garage photo); only admins can view it via short-lived links. */
+function DocUpload({ label, value, onChange, prefix }: { label: string; value: string | null; onChange: (p: string | null) => void; prefix: string }) {
+  const [busy, setBusy] = useState(false);
+  async function pick(f: File) {
+    if (!f.type.startsWith("image/")) return void toast.error("File harus berupa foto");
+    if (f.size > 5 * 1024 * 1024) return void toast.error("Maksimal 5 MB");
+    setBusy(true);
+    const path = `${prefix}/${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.]+/g, "-")}`;
+    const { error } = await supabase.storage.from("dokumen").upload(path, f, { contentType: f.type });
+    setBusy(false);
+    if (error) return void toast.error("Gagal mengunggah");
+    onChange(path); toast.success("Foto diunggah");
+  }
+  async function view() {
+    const { data } = await supabase.storage.from("dokumen").createSignedUrl(value!, 120);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <label className={`${btnSecondary} cursor-pointer`}>
+        <Upload className="h-4 w-4" />{busy ? "Mengunggah…" : label}
+        <input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) pick(f); e.target.value = ""; }} />
+      </label>
+      {value ? (<>
+        <span className="text-xs text-success">Terunggah</span>
+        <button type="button" className={btnSecondary} onClick={view}><Eye className="h-4 w-4" /> Lihat</button>
+        <button type="button" className={btnSecondary} onClick={() => onChange(null)} aria-label="Hapus foto"><X className="h-4 w-4" /></button>
+      </>) : <span className="text-xs text-muted-foreground">Belum ada foto</span>}
+    </div>
+  );
+}
 
 function Page() {
   const qc = useQueryClient();
@@ -47,21 +83,28 @@ function Page() {
   }
   function openEdit(a: Me) {
     setEditing(a); setPreview(a.nomor_anggota);
-    setForm({ nama_lengkap: a.nama_lengkap, no_hp: a.no_hp, wilayah: a.wilayah, nama_usaha: a.nama_usaha, status: a.status, role: a.role });
+    const r = a as Me & { no_anggota: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
+    const unit = Array.isArray(r.unit) ? (r.unit as string[]) : [];
+    setForm({ nama_lengkap: a.nama_lengkap, no_anggota: r.no_anggota ?? "", wilayah: a.wilayah, nama_usaha: a.nama_usaha, maps_url: r.maps_url ?? "", nib: r.nib ?? "",
+      ktp_path: r.ktp_path, garasi_path: r.garasi_path, unit: unit.length ? unit : [""], status: a.status, role: a.role });
     setOpen(true);
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nama_lengkap.trim() || !form.no_hp.trim() || !form.nama_usaha.trim()) return void toast.error("Lengkapi semua data");
+    if (!form.nama_lengkap.trim() || !form.nama_usaha.trim()) return void toast.error("Nama lengkap dan nama garasi wajib diisi");
+    if (form.maps_url && !/^https?:\/\//.test(form.maps_url.trim())) return void toast.error("Link Google Maps harus diawali https://");
+    const payload = { ...form, no_anggota: form.no_anggota.trim() || null, maps_url: form.maps_url.trim() || null, nib: form.nib.trim() || null,
+      unit: form.unit.map((u) => u.trim()).filter(Boolean), no_hp: editing?.no_hp ?? "" };
     setSaving(true);
     try {
-      if (editing) { await update({ data: { ...form, id: editing.id } as never }); toast.success("Anggota diperbarui"); }
-      else { const r = await create({ data: form as never }); setCred(r); }
+      if (editing) { await update({ data: { ...payload, id: editing.id } as never }); toast.success("Anggota diperbarui"); }
+      else { const r = await create({ data: payload as never }); setCred(r); }
       setOpen(false); qc.invalidateQueries({ queryKey: ["anggota-list"] });
     } catch (err) { toast.error((err as Error).message); } finally { setSaving(false); }
   }
 
   const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+  const setUnit = (i: number, v: string) => setForm({ ...form, unit: form.unit.map((u, j) => (j === i ? v : u)) });
 
   return (
     <>
@@ -71,14 +114,15 @@ function Page() {
         <select className={inputCls} value={fw} onChange={(e) => setFw(e.target.value)}><option value="">Semua wilayah</option>{WILAYAH_JABAR.map((w) => <option key={w}>{w}</option>)}</select>
         <select className={inputCls} value={fs} onChange={(e) => setFs(e.target.value)}><option value="">Semua status</option><option value="aktif">Aktif</option><option value="non_aktif">Non-aktif</option></select>
       </div>
-      <Table head={["Nomor", "Nama", "HP", "Wilayah", "Usaha", "Status", "Role", "Aksi"]}>
+      <Table head={["Nomor Login", "No. Anggota", "Nama", "Garasi", "DPC", "Unit", "Status", "Role", "Aksi"]}>
         {list.map((a) => (
           <tr key={a.id}>
             <td className={`${td} whitespace-nowrap font-mono text-xs`}>{a.nomor_anggota}</td>
+            <td className={`${td} whitespace-nowrap font-mono text-xs`}>{(a as { no_anggota?: string | null }).no_anggota ?? "—"}</td>
             <td className={`${td} font-semibold`}>{a.nama_lengkap}</td>
-            <td className={td}>{a.no_hp}</td>
-            <td className={td}>{a.wilayah}</td>
             <td className={td}>{a.nama_usaha}</td>
+            <td className={td}>{a.wilayah}</td>
+            <td className={td}>{Array.isArray((a as { unit?: unknown }).unit) ? ((a as { unit: unknown[] }).unit.length) : 0}</td>
             <td className={td}><StatusBadge status={a.status} /></td>
             <td className={`${td} uppercase text-xs font-bold`}>{a.role}</td>
             <td className={td}>
@@ -95,12 +139,27 @@ function Page() {
       </Table>
 
       <Modal open={open} onOpenChange={setOpen} title={editing ? "Edit Anggota" : "Tambah Anggota"}>
-        <form onSubmit={submit} className="space-y-3">
-          <Field label="Nomor Anggota (otomatis)"><input className={`${inputCls} opacity-70`} value={preview} readOnly /></Field>
-          <Field label="Nama Lengkap"><input className={inputCls} value={form.nama_lengkap} onChange={set("nama_lengkap")} maxLength={100} /></Field>
-          <Field label="No. HP"><input className={inputCls} value={form.no_hp} onChange={set("no_hp")} maxLength={20} /></Field>
-          <Field label="Wilayah"><select className={inputCls} value={form.wilayah} onChange={set("wilayah")}>{WILAYAH_JABAR.map((w) => <option key={w}>{w}</option>)}</select></Field>
-          <Field label="Nama Usaha"><input className={inputCls} value={form.nama_usaha} onChange={set("nama_usaha")} maxLength={100} /></Field>
+        <form onSubmit={submit} className="max-h-[75vh] space-y-3 overflow-y-auto pr-1">
+          <Field label="Nomor Login Anggota (otomatis)"><input className={`${inputCls} opacity-70`} value={preview} readOnly /></Field>
+          <Field label="Nama Lengkap"><input className={inputCls} value={form.nama_lengkap} onChange={set("nama_lengkap")} maxLength={100} placeholder="Iyus Abdurrahman" /></Field>
+          <Field label="No. Anggota"><input className={inputCls} value={form.no_anggota} onChange={set("no_anggota")} maxLength={40} placeholder="05.2024.06.06.0122" /></Field>
+          <Field label="KTP / SIM"><DocUpload label="Upload KTP" value={form.ktp_path} onChange={(p) => setForm({ ...form, ktp_path: p })} prefix="ktp" /></Field>
+          <Field label="Nama Garasi"><input className={inputCls} value={form.nama_usaha} onChange={set("nama_usaha")} maxLength={100} placeholder="Yuz Rentcar" /></Field>
+          <Field label="Foto Garasi Rental"><DocUpload label="Upload Garasi Rental" value={form.garasi_path} onChange={(p) => setForm({ ...form, garasi_path: p })} prefix="garasi" /></Field>
+          <Field label="DPC"><select className={inputCls} value={form.wilayah} onChange={set("wilayah")}>{WILAYAH_JABAR.map((w) => <option key={w}>{w}</option>)}</select></Field>
+          <Field label="Koordinat / Link Google Maps Garasi"><input className={inputCls} value={form.maps_url} onChange={set("maps_url")} maxLength={500} placeholder="https://maps.app.goo.gl/…" /></Field>
+          <Field label="NIB (jika ada)"><input className={inputCls} value={form.nib} onChange={set("nib")} maxLength={40} /></Field>
+          <Field label="Data Unit">
+            <div className="space-y-2">
+              {form.unit.map((u, i) => (
+                <div key={i} className="flex gap-2">
+                  <input className={inputCls} value={u} onChange={(e) => setUnit(i, e.target.value)} maxLength={120} placeholder="New Avanza MT (Hitam) Z 1062 EN" />
+                  <button type="button" className={btnDanger} aria-label="Hapus unit" onClick={() => setForm({ ...form, unit: form.unit.length > 1 ? form.unit.filter((_, j) => j !== i) : [""] })}><Trash2 className="h-4 w-4" /></button>
+                </div>
+              ))}
+              <button type="button" className={btnSecondary} onClick={() => setForm({ ...form, unit: [...form.unit, ""] })}><Plus className="h-4 w-4" /> Tambah Unit</button>
+            </div>
+          </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Status"><select className={inputCls} value={form.status} onChange={set("status")}><option value="aktif">Aktif</option><option value="non_aktif">Non-aktif</option></select></Field>
             <Field label="Role"><select className={inputCls} value={form.role} onChange={set("role")}><option value="anggota">Anggota</option><option value="bendahara">Bendahara</option><option value="admin">Admin</option></select></Field>
