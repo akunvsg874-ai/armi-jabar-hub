@@ -15,6 +15,13 @@
       "when": 1792159595199,
       "tag": "0001_cms_halaman_artikel_galeri_pendaftaran",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792160340143,
+      "tag": "0002_anggota_data_lengkap",
+      "breakpoints": true
     }
   ]
 }

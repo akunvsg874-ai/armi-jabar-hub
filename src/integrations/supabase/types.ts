@@ -17,37 +17,55 @@ export type Database = {
       anggota: {
         Row: {
           created_at: string
+          garasi_path: string | null
           id: string
+          ktp_path: string | null
+          maps_url: string | null
           nama_lengkap: string
           nama_usaha: string
+          nib: string | null
+          no_anggota: string | null
           no_hp: string
           nomor_anggota: string
           role: Database["public"]["Enums"]["app_role"]
           status: Database["public"]["Enums"]["status_anggota"]
+          unit: Json
           user_id: string | null
           wilayah: string
         }
         Insert: {
           created_at?: string
+          garasi_path?: string | null
           id?: string
+          ktp_path?: string | null
+          maps_url?: string | null
           nama_lengkap: string
           nama_usaha: string
-          no_hp: string
+          nib?: string | null
+          no_anggota?: string | null
+          no_hp?: string
           nomor_anggota: string
           role?: Database["public"]["Enums"]["app_role"]
           status?: Database["public"]["Enums"]["status_anggota"]
+          unit?: Json
           user_id?: string | null
           wilayah: string
         }
         Update: {
           created_at?: string
+          garasi_path?: string | null
           id?: string
+          ktp_path?: string | null
+          maps_url?: string | null
           nama_lengkap?: string
           nama_usaha?: string
+          nib?: string | null
+          no_anggota?: string | null
           no_hp?: string
           nomor_anggota?: string
           role?: Database["public"]["Enums"]["app_role"]
           status?: Database["public"]["Enums"]["status_anggota"]
+          unit?: Json
           user_id?: string | null
           wilayah?: string
         }
