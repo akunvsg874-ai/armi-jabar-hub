@@ -182,7 +182,7 @@ function Index() {
             <Shield className="h-3.5 w-3.5 text-primary" /> {h.hero_eyebrow}
           </span>
           <h1 className="mt-8 text-5xl font-black uppercase leading-[1] sm:text-6xl lg:text-[84px]">
-            {h.hero_title ? h.hero_title : <>Satu Jaringan. <span className="text-primary">Satu Semangat.</span><br />Tumbuh <span className="text-muted-foreground">Bersama.</span></>}
+            <HeroTitle text={h.hero_title} />
           </h1>
           <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             {h.hero_desc}
@@ -428,5 +428,23 @@ function Index() {
       <KegiatanDetail k={view} onOpenChange={(o) => !o && setView(null)} />
       <Lightbox items={gallery.map((g) => ({ src: g.src, alt: g.label, caption: g.label }))} open={lb !== null} onOpenChange={(o) => !o && setLb(null)} startIndex={lb ?? 0} />
     </PublicLayout>
+  );
+}
+
+/** Renders hero title: new line = line break, *text* = orange accent. */
+function HeroTitle({ text }: { text: string }) {
+  const lines = text.replace(/\\n/g, "\n").split("\n");
+  return (
+    <>
+      {lines.map((line, i) => (
+        <span key={i} className="block">
+          {line.split(/(\*[^*]+\*)/g).map((part, j) =>
+            part.startsWith("*") && part.endsWith("*") && part.length > 2
+              ? <span key={j} className="text-primary">{part.slice(1, -1)}</span>
+              : <span key={j}>{part}</span>,
+          )}
+        </span>
+      ))}
+    </>
   );
 }

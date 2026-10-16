@@ -20,7 +20,7 @@ const d = (slug: string, label: string, seo_title: string, seo_description: stri
 export const HALAMAN_DEFAULT: Record<string, Halaman> = {
   beranda: d("beranda", "Beranda", "ARMI DPD Jawa Barat — Satu Jaringan, Satu Semangat",
     "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas.",
-    "Wadah Resmi Pengusaha Rental Mobil Jawa Barat", "", "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.", [], "Tidak dipakai di beranda"),
+    "Wadah Resmi Pengusaha Rental Mobil Jawa Barat", "Satu Jaringan. *Satu Semangat.*\nTumbuh Bersama.", "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.", [], "Tidak dipakai di beranda"),
   tentang: d("tentang", "Tentang Kami", "Tentang Kami — ARMI DPD Jawa Barat", "Profil, visi, dan misi DPD Anggota Rental Mobil Indonesia Jawa Barat.",
     "Tentang Kami", "Mengenal ARMI DPD Jawa Barat", "Wadah resmi para pengusaha rental mobil di Jawa Barat, berlandaskan Tri Arutala — Kebersamaan, Keamanan, Professionalitas.",
     [
