@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, MapPinned, Users, ShieldCheck, Headset, HeartHandshake, Shield, BadgeCheck } from "lucide-react";
-import { PublicLayout } from "@/components/site/PublicLayout";
-import { KegiatanCard, ProgramCards, EmptyState } from "@/components/site/shared";
+import { useMemo } from "react";
+import { ArrowRight, MapPin, Search, Shield, Network, Scale } from "lucide-react";
+import { PublicLayout, logoArmi } from "@/components/site/PublicLayout";
+import { JenisBadge, StatusBadge } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
+import { WILAYAH_JABAR, todayISO } from "@/lib/armi";
 import heroImg from "@/assets/hero-cars.jpg";
 import convoyImg from "@/assets/convoy.jpg";
 import communityImg from "@/assets/community.jpg";
@@ -12,178 +14,277 @@ import communityImg from "@/assets/community.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ARMI DPD Jawa Barat — Wadah Resmi Rental Mobil Jabar" },
-      { name: "description", content: "Membangun sinergi & profesionalitas pengusaha rental mobil di Jawa Barat." },
+      { title: "ARMI DPD Jawa Barat — Satu Jaringan, Satu Semangat" },
+      { name: "description", content: "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas." },
       { property: "og:title", content: "ARMI DPD Jawa Barat" },
-      { property: "og:description", content: "Wadah resmi pengusaha rental mobil Jawa Barat." },
+      { property: "og:description", content: "Satu jaringan. Satu semangat. Tumbuh bersama." },
     ],
   }),
   component: Index,
 });
 
+const BULAN = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGU", "SEP", "OKT", "NOV", "DES"];
+
+function Label({ children, light }: { children: string; light?: boolean }) {
+  return (
+    <span className={`flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] ${light ? "text-primary-dark" : "text-primary"}`}>
+      <span className="h-px w-8 bg-current" />{children}
+    </span>
+  );
+}
+
+const H2 = "mt-4 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-[52px]";
+const btnP = "inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary-dark";
+const btnS = "inline-flex items-center gap-2 rounded-sm border border-foreground/30 px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-colors hover:border-foreground";
+
 function Index() {
-  const { data: kegiatan, isLoading } = useQuery(kegiatanQuery);
-  const { data: stat } = useQuery({
-    queryKey: ["statistik"],
-    queryFn: async () => (await supabase.rpc("statistik_publik")).data as { anggota: number } | null,
+  const { data: kegiatan = [] } = useQuery(kegiatanQuery);
+  const { data: anggota = [] } = useQuery({
+    queryKey: ["cari-anggota", ""],
+    queryFn: async () => (await supabase.rpc("cari_anggota_publik", { q: "" })).data ?? [],
   });
 
-  const STATS = [
-    { icon: MapPinned, v: "27", l: "Kabupaten/Kota", d: "Cakupan wilayah Jawa Barat" },
-    { icon: Users, v: stat ? String(stat.anggota) : "—", l: "Anggota Aktif", d: "Terdaftar di portal ARMI" },
-    { icon: ShieldCheck, v: "Terverifikasi", l: "Direktori Anggota", d: "Cek rental resmi secara terbuka" },
-    { icon: Headset, v: "Korlap", l: "Jaringan Bantuan", d: "Koordinasi antar wilayah" },
+  const upcoming = kegiatan.filter((k) => k.tanggal >= todayISO()).sort((a, b) => a.tanggal.localeCompare(b.tanggal)).slice(0, 3);
+  const perWilayah = useMemo(() => {
+    const m = new Map<string, number>();
+    anggota.filter((a) => a.status === "aktif").forEach((a) => m.set(a.wilayah, (m.get(a.wilayah) ?? 0) + 1));
+    return m;
+  }, [anggota]);
+  const preview = anggota.filter((a) => a.status === "aktif").slice(0, 4);
+
+  const gallery = [
+    { src: convoyImg, label: "Konvoi", w: 1408, h: 1008 },
+    { src: communityImg, label: "Kopdar", w: 1408, h: 1008 },
+    { src: heroImg, label: "Armada", w: 1600, h: 912 },
   ];
 
   return (
     <PublicLayout overlay>
       {/* HERO */}
-      <section className="relative flex min-h-[640px] items-end overflow-hidden md:min-h-[760px] md:items-center">
-        <img src={heroImg} alt="Deretan armada rental mobil premium di malam hari" width={1600} height={912}
-          className="absolute inset-0 h-full w-full object-cover object-[70%_center]" />
+      <section className="relative flex min-h-[620px] items-end overflow-hidden md:min-h-[820px]">
+        <img src={convoyImg} alt="Konvoi armada rental di jalan pegunungan Jawa Barat" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover object-[60%_center]" />
         <div className="absolute inset-0 bg-hero-overlay" />
         <div className="absolute inset-0 bg-bottom-fade" />
-        <div className="absolute -right-24 top-0 hidden h-full w-48 -skew-x-12 bg-primary/80 lg:block" aria-hidden />
-        <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 pt-28 md:py-0">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Wadah Resmi Pengusaha Rental Mobil Jawa Barat
-            </span>
-            <h1 className="mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[68px]">
-              Membangun Sinergi & <span className="text-primary">Profesionalitas</span> Rental Mobil Jawa Barat
-            </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-[17px]">
-              ARMI DPD Jawa Barat menjadi wadah kolaborasi pengusaha rental mobil untuk memperkuat jaringan, meningkatkan profesionalitas, dan membangun ekosistem usaha yang lebih aman dan terpercaya.
+        <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:pb-24">
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary">Anggota Rental Mobil Indonesia · Jawa Barat</span>
+          <h1 className="mt-5 text-5xl font-extrabold uppercase leading-[0.92] tracking-tight sm:text-6xl lg:text-[88px]">
+            Satu Jaringan.<br />Satu Semangat.<br /><span className="text-primary">Tumbuh Bersama.</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/tentang" className={btnP}>Kenali ARMI <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/anggota" className={btnS}>Cari Anggota</Link>
+          </div>
+          <p className="mt-10 border-l-2 border-primary pl-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Tri Arutala — Kebersamaan, Keamanan, Professionalitas
+          </p>
+        </div>
+      </section>
+
+      {/* STRIP */}
+      <section className="bg-primary text-primary-foreground">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-5 py-5 text-sm font-extrabold uppercase tracking-[0.3em] md:justify-between md:text-base">
+          <span>Kebersamaan</span><span aria-hidden className="h-2 w-2 rotate-45 bg-primary-foreground" />
+          <span>Keamanan</span><span aria-hidden className="h-2 w-2 rotate-45 bg-primary-foreground" />
+          <span>Profesionalitas</span>
+        </div>
+      </section>
+
+      {/* INTRO — light */}
+      <section className="bg-ivory text-ink">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-2 lg:items-center">
+          <div>
+            <Label light>Tentang Komunitas</Label>
+            <h2 className={H2}>Bukan Sekadar Jaringan Usaha.</h2>
+            <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-ink-muted">
+              ARMI DPD Jawa Barat mempertemukan pengusaha rental mobil dalam jaringan yang mengutamakan kebersamaan, keamanan, dan profesionalitas.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/kontak" className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark">
-                Daftar Anggota DPD <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/anggota" className="inline-flex items-center gap-2 rounded-md border border-input bg-background/40 px-6 py-3 text-sm font-semibold backdrop-blur transition-colors hover:border-foreground">
-                Cari Anggota
-              </Link>
-            </div>
-            <p className="mt-8 text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-              Kebersamaan <span className="text-primary">•</span> Keamanan <span className="text-primary">•</span> Profesionalitas
-            </p>
+            <Link to="/tentang" className="mt-8 inline-flex items-center gap-2 rounded-sm bg-ink px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-ivory hover:bg-primary">
+              Mengenal ARMI <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="relative">
+            <img src={communityImg} alt="Suasana silaturahmi anggota komunitas rental mobil" loading="lazy" width={1408} height={1008} className="aspect-[4/3] w-full object-cover [clip-path:polygon(0_0,100%_0,100%_88%,88%_100%,0_100%)]" />
+            <img src={logoArmi.url} alt="Logo ARMI" loading="lazy" width={431} height={461} className="absolute -bottom-8 -left-4 h-28 w-auto drop-shadow-xl md:-left-8 md:h-36" />
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="border-y border-border bg-card">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
-          {STATS.map((s, i) => (
-            <div key={s.l} className={`flex items-start gap-4 px-5 py-8 ${i % 2 ? "border-l" : ""} ${i >= 2 ? "border-t lg:border-t-0" : ""} ${i === 2 ? "lg:border-l" : ""} border-border`}>
-              <s.icon className="mt-1 h-5 w-5 shrink-0 text-primary" />
-              <div>
-                <div className="text-2xl font-extrabold tracking-tight md:text-3xl">{s.v}</div>
-                <div className="mt-1 text-sm font-semibold">{s.l}</div>
-                <div className="text-xs text-muted-foreground">{s.d}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* PROGRAM — light editorial */}
-      <section className="bg-ivory py-20 text-ink md:py-28">
-        <div className="mx-auto max-w-7xl px-5">
-          <div className="mb-12 grid gap-4 md:grid-cols-2 md:items-end">
-            <h2 className="accent-bar text-3xl font-extrabold tracking-tight md:text-[42px] md:leading-tight">Lebih dari Sekadar Komunitas</h2>
-            <p className="text-base text-ink-muted md:text-right">Kolaborasi untuk membangun ekosistem usaha rental mobil yang lebih kuat.</p>
-          </div>
-          <ProgramCards light />
-        </div>
-      </section>
-
-      {/* KEGIATAN */}
+      {/* PROGRAMS */}
       <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-          <div className="max-w-2xl">
-            <h2 className="accent-bar text-3xl font-extrabold tracking-tight md:text-[42px] md:leading-tight">Informasi Kegiatan DPD ARMI Jabar</h2>
-            <p className="mt-3 text-muted-foreground">Dokumentasi kegiatan, pertemuan, dan kolaborasi anggota ARMI Jawa Barat.</p>
+        <Label>Apa yang Kami Bangun</Label>
+        <h2 className={H2}>Bertumbuh Lebih Kuat, <span className="text-primary">Bersama.</span></h2>
+        <div className="mt-12 grid gap-4 lg:grid-cols-3">
+          <div className="relative overflow-hidden rounded-md border border-border bg-card p-8">
+            <div aria-hidden className="absolute -right-10 -top-10 h-40 w-40 rounded-full border-[14px] border-primary/15" />
+            <div aria-hidden className="absolute -right-2 -top-2 h-24 w-24 rounded-full border-4 border-primary/25" />
+            <Shield className="h-8 w-8 text-primary" />
+            <h3 className="mt-16 text-2xl font-extrabold uppercase leading-tight">Keamanan & Pandawa Korlap</h3>
+            <p className="mt-3 text-[15px] text-muted-foreground">Mendorong koordinasi dan kerja sama antaranggota untuk mendukung keamanan serta respons komunitas sesuai mekanisme organisasi.</p>
           </div>
-          <Link to="/info-kegiatan" className="inline-flex items-center gap-2 rounded-md border border-input px-5 py-2.5 text-sm font-semibold hover:border-foreground">
-            Lihat Semua Kegiatan <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="group relative min-h-[360px] overflow-hidden rounded-md">
+            <img src={heroImg} alt="Armada anggota" loading="lazy" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-bottom-fade" />
+            <div className="absolute inset-0 bg-background/40" />
+            <div className="relative flex h-full flex-col justify-end p-8">
+              <Network className="h-8 w-8 text-primary" />
+              <h3 className="mt-4 text-2xl font-extrabold uppercase leading-tight">Jaringan & Sub-Driver</h3>
+              <p className="mt-3 text-[15px] text-foreground/80">Memperkuat koneksi antaranggota dan mendukung kolaborasi operasional dalam ekosistem usaha rental mobil.</p>
+            </div>
+          </div>
+          <div className="rounded-md border-t-4 border-armi-green bg-ivory p-8 text-ink">
+            <Scale className="h-8 w-8 text-armi-green" />
+            <h3 className="mt-16 text-2xl font-extrabold uppercase leading-tight">Legalitas & Kemitraan</h3>
+            <p className="mt-3 text-[15px] text-ink-muted">Mendorong profesionalitas usaha dan membuka ruang kolaborasi dengan mitra yang relevan.</p>
+          </div>
         </div>
-        {isLoading ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2].map((i) => <div key={i} className="h-96 animate-pulse rounded-lg bg-card" />)}
+      </section>
+
+      {/* GALLERY */}
+      <section className="border-t border-border bg-card py-20 md:py-28">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <Label>Cerita Kebersamaan</Label>
+              <h2 className={H2}>Setiap Perjalanan Punya Cerita.</h2>
+              <p className="mt-4 text-muted-foreground">Dokumentasi kegiatan, pertemuan, dan momen kebersamaan anggota ARMI Jawa Barat.</p>
+            </div>
+            <Link to="/info-kegiatan" className={btnS}>Lihat Semua Kegiatan</Link>
           </div>
-        ) : kegiatan && kegiatan.length ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {kegiatan.slice(0, 6).map((k) => <KegiatanCard key={k.id} k={k} />)}
+          <div className="mt-12 grid gap-3 md:grid-cols-3 md:grid-rows-2">
+            {gallery.map((g, i) => (
+              <figure key={g.label} className={`group relative overflow-hidden rounded-sm ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
+                <img src={g.src} alt={`Dokumentasi ${g.label.toLowerCase()}`} loading="lazy" width={g.w} height={g.h} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i === 0 ? "aspect-[4/3] md:h-full md:aspect-auto" : "aspect-[4/3]"}`} />
+                <figcaption className="absolute left-3 top-3 rounded-sm bg-background/80 px-2 py-1 text-[10px] font-bold uppercase tracking-widest">{g.label}</figcaption>
+              </figure>
+            ))}
+          </div>
+          {kegiatan.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+              {kegiatan.slice(0, 4).map((k) => (
+                <figure key={k.id} className="group relative overflow-hidden rounded-sm">
+                  <img src={k.foto} alt={k.judul} loading="lazy" width={600} height={400} className="aspect-[3/2] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <figcaption className="absolute left-2 top-2"><JenisBadge jenis={k.jenis} /></figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* AGENDA */}
+      <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
+        <Label>Agenda Komunitas</Label>
+        <h2 className={H2}>Berikutnya, <span className="text-primary">Kita Bertemu.</span></h2>
+        <div className="mt-12 divide-y divide-border border-y border-border">
+          {upcoming.length ? upcoming.map((k) => {
+            const d = new Date(k.tanggal + "T00:00:00");
+            return (
+              <div key={k.id} className="grid gap-4 py-7 md:grid-cols-[120px_1fr_auto] md:items-center">
+                <div className="flex items-baseline gap-2 md:block">
+                  <div className="text-5xl font-extrabold leading-none tracking-tight">{String(d.getDate()).padStart(2, "0")}</div>
+                  <div className="text-sm font-bold tracking-widest text-primary">{BULAN[d.getMonth()]} {d.getFullYear()}</div>
+                </div>
+                <div>
+                  <JenisBadge jenis={k.jenis} />
+                  <h3 className="mt-2 text-xl font-bold">{k.judul}</h3>
+                  <p className="mt-1 line-clamp-2 max-w-2xl text-sm text-muted-foreground">{k.deskripsi}</p>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{k.lokasi}</div>
+              </div>
+            );
+          }) : (
+            <div className="py-12 text-center text-muted-foreground">
+              Belum ada agenda mendatang. <Link to="/info-kegiatan" className="text-primary">Lihat arsip kegiatan →</Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* REGIONAL + DIRECTORY */}
+      <section className="bg-ivory text-ink">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <Label light>Jaringan Kita</Label>
+            <h2 className={H2}>Dekat di Wilayah, Kuat dalam Kolaborasi.</h2>
+            <p className="mt-5 max-w-md text-ink-muted">Temukan anggota ARMI berdasarkan wilayah dan kenali jaringan usaha rental mobil di Jawa Barat.</p>
+            <Link to="/anggota" className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary-dark">
+              <Search className="h-4 w-4" /> Cari Anggota
+            </Link>
+          </div>
+          <div className="rounded-md border border-ink/10 p-6">
+            <div className="mb-4 flex justify-between text-xs font-bold uppercase tracking-widest text-ink-muted"><span>27 Kabupaten / Kota</span><span>Anggota aktif</span></div>
+            <ul className="grid gap-x-6 sm:grid-cols-2">
+              {WILAYAH_JABAR.map((w) => (
+                <li key={w} className="flex justify-between border-b border-ink/10 py-2 text-sm">
+                  <span>{w.replace("Kabupaten ", "Kab. ")}</span>
+                  <span className={perWilayah.get(w) ? "font-bold text-primary-dark" : "text-ink-muted"}>{perWilayah.get(w) ?? "–"}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <Label>Jaringan Anggota</Label>
+            <h2 className={H2}>Kenali Pelaku Usaha dalam Jaringan ARMI.</h2>
+          </div>
+          <Link to="/anggota" className={btnS}>Buka Direktori</Link>
+        </div>
+        {preview.length ? (
+          <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+            {preview.map((a) => (
+              <div key={a.nomor_anggota} className="bg-background p-6">
+                <StatusBadge status={a.status} />
+                <h3 className="mt-4 text-lg font-bold">{a.nama_lengkap}</h3>
+                <p className="text-sm text-muted-foreground">{a.nama_usaha}</p>
+                <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5 text-primary" />{a.wilayah}</p>
+              </div>
+            ))}
           </div>
         ) : (
-          <EmptyState text="Belum ada kegiatan yang dipublikasikan." />
+          <Link to="/anggota" className="mt-12 flex items-center gap-3 rounded-md border border-border bg-card p-6 text-muted-foreground hover:border-primary"><Search className="h-5 w-5" /> Cari anggota berdasarkan nama, usaha, atau wilayah</Link>
         )}
       </section>
 
       {/* VALUES */}
       <section className="border-y border-border bg-card">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 md:py-28 lg:grid-cols-2 lg:items-center">
-          <div className="grid grid-cols-5 grid-rows-2 gap-3">
-            <img src={convoyImg} alt="Konvoi armada di jalan pegunungan Jawa Barat" loading="lazy" width={1408} height={1008} className="col-span-3 row-span-2 h-full w-full rounded-lg object-cover" />
-            <img src={communityImg} alt="Suasana silaturahmi komunitas rental mobil" loading="lazy" width={1408} height={1008} className="col-span-2 h-full w-full rounded-lg object-cover" />
-            <img src={heroImg} alt="Armada rental mobil" loading="lazy" width={1600} height={912} className="col-span-2 h-full w-full rounded-lg object-cover" />
+        <div className="mx-auto max-w-7xl px-5 py-20 md:py-28">
+          <h2 className="max-w-4xl text-5xl font-extrabold uppercase leading-[0.92] tracking-tight md:text-7xl">
+            Kita Tumbuh Karena <span className="text-primary">Kebersamaan.</span>
+          </h2>
+          <div className="mt-14 grid gap-px bg-border md:grid-cols-3">
+            {[
+              ["Kebersamaan", "Membangun hubungan dan kolaborasi antaranggota."],
+              ["Keamanan", "Mendukung kesadaran dan kerja sama untuk ekosistem usaha yang lebih aman."],
+              ["Profesionalitas", "Mendorong praktik usaha yang bertanggung jawab dan profesional."],
+            ].map(([t, d], i) => (
+              <div key={t} className="bg-card p-8 md:first:pl-0">
+                <div className="text-xs font-bold text-primary">0{i + 1}</div>
+                <h3 className="mt-3 text-2xl font-extrabold uppercase">{t}</h3>
+                <p className="mt-2 text-[15px] text-muted-foreground">{d}</p>
+              </div>
+            ))}
           </div>
-          <div>
-            <h2 className="accent-bar text-3xl font-extrabold tracking-tight md:text-[42px] md:leading-tight">Satu Tujuan, Satu Komunitas</h2>
-            <p className="mt-4 text-muted-foreground">Tri Arutala menjadi pegangan setiap anggota ARMI Jawa Barat dalam menjalankan usaha dan berorganisasi.</p>
-            <div className="mt-8 space-y-6">
-              {[
-                { icon: HeartHandshake, t: "Kebersamaan", d: "Saling mendukung antar pengusaha rental lintas kabupaten dan kota." },
-                { icon: Shield, t: "Keamanan", d: "Berbagi informasi untuk melindungi armada dari konsumen bermasalah." },
-                { icon: BadgeCheck, t: "Profesionalitas", d: "Menjaga standar layanan dan kepercayaan masyarakat." },
-              ].map((v) => (
-                <div key={v.t} className="flex gap-4 border-l-2 border-primary pl-5">
-                  <v.icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <h3 className="text-lg font-bold">{v.t}</h3>
-                    <p className="text-sm text-muted-foreground">{v.d}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT — light */}
-      <section className="bg-ivory text-ink">
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-2 lg:items-center">
-          <div>
-            <h2 className="accent-bar text-3xl font-extrabold tracking-tight md:text-[42px] md:leading-tight">Mengenal ARMI DPD Jawa Barat</h2>
-            <p className="mt-5 text-base leading-relaxed text-ink-muted">
-              ARMI (Anggota Rental Mobil Indonesia) DPD Jawa Barat adalah wadah para pengusaha rental mobil di Jawa Barat. Kami menghubungkan anggota untuk memperkuat jaringan, menjaga keamanan armada, dan meningkatkan profesionalitas usaha.
-            </p>
-            <ul className="mt-6 space-y-2 text-sm text-ink">
-              <li className="flex gap-2"><span className="text-primary">—</span> Keamanan & Pandawa Korlap</li>
-              <li className="flex gap-2"><span className="text-primary">—</span> Jaringan & Sub-Driver</li>
-              <li className="flex gap-2"><span className="text-primary">—</span> Legalitas & Kemitraan</li>
-            </ul>
-            <Link to="/tentang" className="mt-8 inline-flex items-center gap-2 rounded-md bg-ink px-6 py-3 text-sm font-semibold text-ivory hover:bg-primary">
-              Selengkapnya <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <img src={communityImg} alt="Anggota komunitas rental mobil berbincang" loading="lazy" width={1408} height={1008} className="aspect-[4/3] w-full rounded-lg object-cover" />
         </div>
       </section>
 
       {/* CTA */}
       <section className="relative overflow-hidden">
-        <img src={convoyImg} alt="" loading="lazy" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover opacity-30" />
+        <img src={communityImg} alt="" loading="lazy" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover opacity-35" />
         <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl font-extrabold tracking-tight md:text-[44px] md:leading-tight">Jadi Bagian dari Ekosistem Rental Mobil yang Lebih Kuat</h2>
-            <p className="mt-4 text-muted-foreground">Bersama ARMI DPD Jawa Barat, bangun jaringan, berbagi pengalaman, dan tumbuh bersama pelaku usaha rental mobil.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/kontak" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-dark">Informasi Keanggotaan</Link>
-              <Link to="/kontak" className="rounded-md border border-input px-6 py-3 text-sm font-semibold hover:border-foreground">Hubungi Pengurus</Link>
-            </div>
+        <div aria-hidden className="absolute inset-y-0 left-0 w-2 bg-primary" />
+        <div className="relative mx-auto max-w-7xl px-5 py-24 md:py-32">
+          <h2 className="max-w-3xl text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-6xl">Jadilah Bagian dari <span className="text-primary">Perjalanan Kita.</span></h2>
+          <p className="mt-5 max-w-xl text-muted-foreground">Bangun jaringan, bertukar pengalaman, dan tumbuh bersama pelaku usaha rental mobil di Jawa Barat.</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/kontak" className={btnP}>Informasi Keanggotaan</Link>
+            <Link to="/kontak" className={btnS}>Hubungi Pengurus</Link>
           </div>
         </div>
       </section>

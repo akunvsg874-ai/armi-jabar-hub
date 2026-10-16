@@ -58,7 +58,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           </nav>
           <div className="hidden items-center gap-4 lg:flex">
             <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">Masuk</Link>
-            <Link to="/kontak" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark">
+            <Link to="/kontak" className="rounded-sm bg-primary px-4 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
           </div>
@@ -116,7 +116,7 @@ export function PageHeading({ eyebrow, title, desc }: { eyebrow: string; title: 
   return (
     <div className="mb-10 max-w-3xl">
       <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
-      <h1 className="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h1>
+      <h1 className="mt-3 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-5xl">{title}</h1>
       {desc && <p className="mt-3 text-base text-muted-foreground">{desc}</p>}
     </div>
   );
@@ -129,7 +129,7 @@ export function PageHero({ image, eyebrow, title, desc }: { image: string; eyebr
       <div className="absolute inset-0 bg-hero-overlay" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{eyebrow}</span>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-tight md:text-5xl">{title}</h1>
+        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-6xl">{title}</h1>
         {desc && <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">{desc}</p>}
       </div>
     </section>
