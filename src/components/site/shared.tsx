@@ -18,13 +18,13 @@ export function StatusBadge({ status }: { status: "aktif" | "non_aktif" }) {
 
 export function KegiatanCard({ k, actions }: { k: Kegiatan; actions?: React.ReactNode }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary">
+    <article className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary">
       <div className="relative overflow-hidden">
-        <img src={k.foto} alt={k.judul} loading="lazy" width={600} height={400} className="aspect-[3/2] w-full object-cover transition group-hover:scale-105" />
+        <img src={k.foto} alt={k.judul} loading="lazy" width={600} height={400} className="aspect-[3/2] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         <div className="absolute left-3 top-3"><JenisBadge jenis={k.jenis} /></div>
       </div>
       <div className="space-y-2 p-5">
-        <h3 className="text-xl font-bold leading-tight">{k.judul}</h3>
+        <h3 className="text-lg font-bold leading-snug">{k.judul}</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-primary" />{formatTanggal(k.tanggal)}</span>
           <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-primary" />{k.lokasi}</span>
@@ -42,17 +42,18 @@ const PROGRAMS = [
   { icon: FileBadge, title: "Legalitas & Kemitraan", desc: "Pendampingan legalitas usaha serta kemitraan dengan instansi, leasing, dan asuransi." },
 ];
 
-export function ProgramCards() {
+export function ProgramCards({ light = false }: { light?: boolean }) {
+  const card = light ? "border-ink/10 bg-background/0 hover:border-primary" : "border-border bg-card hover:border-primary";
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-      {PROGRAMS.map((p) => (
-        <div key={p.title} className="relative overflow-hidden rounded-xl border border-border bg-card p-6">
-          <div className="absolute right-0 top-0 h-16 w-16 racing-stripe opacity-10" />
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <p.icon className="h-6 w-6" />
+      {PROGRAMS.map((p, i) => (
+        <div key={p.title} className={`group rounded-lg border p-7 transition-colors ${card}`}>
+          <div className="flex items-center justify-between">
+            <p.icon className="h-7 w-7 text-primary" />
+            <span className={`text-xs font-semibold ${light ? "text-ink-muted" : "text-muted-foreground"}`}>0{i + 1}</span>
           </div>
-          <h3 className="text-xl font-bold">{p.title}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+          <h3 className="mt-8 text-xl font-bold">{p.title}</h3>
+          <p className={`mt-2 text-[15px] leading-relaxed ${light ? "text-ink-muted" : "text-muted-foreground"}`}>{p.desc}</p>
         </div>
       ))}
     </div>
@@ -60,5 +61,5 @@ export function ProgramCards() {
 }
 
 export function EmptyState({ text }: { text: string }) {
-  return <div className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">{text}</div>;
+  return <div className="rounded-lg border border-dashed border-border p-10 text-center text-muted-foreground">{text}</div>;
 }

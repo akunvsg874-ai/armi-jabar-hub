@@ -40,11 +40,11 @@ function Page() {
           const masuk = rows.filter((t) => t.tipe === "pemasukan").reduce((s, t) => s + Number(t.nominal), 0);
           const keluar = rows.filter((t) => t.tipe === "pengeluaran").reduce((s, t) => s + Number(t.nominal), 0);
           return (
-            <div key={k} className="rounded-xl border border-border bg-card p-5">
+            <div key={k} className="rounded-lg border border-border bg-card p-5">
               <div className="text-xs font-bold uppercase tracking-widest text-primary">{KATEGORI_LABEL[k]}</div>
               <div className="mt-3 flex justify-between text-sm"><span className="text-muted-foreground">Masuk</span><span className="text-success">{formatRupiah(masuk)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Keluar</span><span className="text-destructive">{formatRupiah(keluar)}</span></div>
-              <div className="mt-2 border-t border-border pt-2 font-display text-2xl font-black">{formatRupiah(masuk - keluar)}</div>
+              <div className="mt-2 border-t border-border pt-2 text-2xl font-extrabold tracking-tight">{formatRupiah(masuk - keluar)}</div>
             </div>
           );
         })}

@@ -97,11 +97,11 @@ function BendaharaDash({ me }: { me: Me }) {
           const masuk = rows.filter((t) => t.tipe === "pemasukan").reduce((s, t) => s + Number(t.nominal), 0);
           const keluar = rows.filter((t) => t.tipe === "pengeluaran").reduce((s, t) => s + Number(t.nominal), 0);
           return (
-            <div key={k} className="rounded-xl border border-border bg-card p-5">
+            <div key={k} className="rounded-lg border border-border bg-card p-5">
               <div className="text-xs font-bold uppercase tracking-widest text-primary">{KATEGORI_LABEL[k]}</div>
               <div className="mt-3 flex items-center gap-2 text-sm text-success"><TrendingUp className="h-4 w-4" />{formatRupiah(masuk)}</div>
               <div className="flex items-center gap-2 text-sm text-destructive"><TrendingDown className="h-4 w-4" />{formatRupiah(keluar)}</div>
-              <div className="mt-2 font-display text-2xl font-black">{formatRupiah(masuk - keluar)}</div>
+              <div className="mt-2 text-2xl font-extrabold tracking-tight">{formatRupiah(masuk - keluar)}</div>
             </div>
           );
         })}
@@ -124,9 +124,9 @@ function AnggotaDash({ me }: { me: Me }) {
   });
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_1.4fr]">
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="flex items-center gap-4">
-          <img src={FOTO_PROFIL} alt="Foto profil" width={80} height={80} className="h-20 w-20 rounded-xl" />
+          <img src={FOTO_PROFIL} alt="Foto profil" width={80} height={80} className="h-20 w-20 rounded-lg" />
           <div>
             <div className="text-xl font-bold">{me.nama_lengkap}</div>
             <div className="text-sm text-muted-foreground">{me.nomor_anggota}</div>
@@ -139,7 +139,7 @@ function AnggotaDash({ me }: { me: Me }) {
         </dl>
       </div>
       <div className="space-y-6">
-        <section className="rounded-xl border border-border bg-card p-6">
+        <section className="rounded-lg border border-border bg-card p-6">
           <h2 className="mb-3 text-xl font-bold">Cek Blacklist Cepat</h2>
           <form onSubmit={(e) => { e.preventDefault(); setTerm(q.trim()); }} className="flex gap-2">
             <input className={inputCls} placeholder="Nama / NIK / wilayah" value={q} onChange={(e) => setQ(e.target.value)} />

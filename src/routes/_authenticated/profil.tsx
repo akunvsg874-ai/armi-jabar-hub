@@ -22,8 +22,8 @@ function Profil() {
   return (
     <>
       <PageTitle title="Profil Saya" desc="Hubungi admin jika ada data yang perlu diperbarui." />
-      <div className="max-w-2xl rounded-xl border border-border bg-card p-6">
-        <img src={FOTO_PROFIL} alt="Foto profil" width={150} height={150} className="mb-6 h-32 w-32 rounded-xl" />
+      <div className="max-w-2xl rounded-lg border border-border bg-card p-6">
+        <img src={FOTO_PROFIL} alt="Foto profil" width={150} height={150} className="mb-6 h-32 w-32 rounded-lg" />
         <dl className="divide-y divide-border">
           {rows.map(([k, v]) => (
             <div key={k} className="flex justify-between gap-4 py-3 text-sm">
