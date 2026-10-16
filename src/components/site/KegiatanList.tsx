@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { PublicLayout, PageHero } from "@/components/site/PublicLayout";
-import { KegiatanCard, EmptyState } from "@/components/site/shared";
+import { KegiatanCard, EmptyState, type Kegiatan } from "@/components/site/shared";
+import { KegiatanDetail } from "@/components/site/KegiatanDetail";
 import { kegiatanQuery } from "@/lib/queries";
 import { halamanQuery } from "@/lib/cms";
 import { todayISO } from "@/lib/armi";
@@ -10,6 +12,7 @@ import convoyImg from "@/assets/convoy.jpg";
 export function KegiatanList({ slug, eksekusi }: { slug: "agenda" | "jadwal-eksekusi"; eksekusi: boolean }) {
   const { data: h } = useSuspenseQuery(halamanQuery(slug));
   const { data = [], isLoading } = useQuery(kegiatanQuery);
+  const [view, setView] = useState<Kegiatan | null>(null);
   const list = data.filter((k) => (k.jenis === "EKSEKUSI") === eksekusi);
   const today = todayISO();
   const upcoming = list.filter((k) => k.tanggal >= today).sort((a, b) => a.tanggal.localeCompare(b.tanggal));
@@ -22,17 +25,18 @@ export function KegiatanList({ slug, eksekusi }: { slug: "agenda" | "jadwal-ekse
           <>
             <h2 className="mb-6 text-2xl font-black uppercase tracking-wide">Mendatang</h2>
             {upcoming.length ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{upcoming.map((k) => <KegiatanCard key={k.id} k={k} />)}</div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{upcoming.map((k) => <KegiatanCard key={k.id} k={k} onView={() => setView(k)} />)}</div>
             ) : <EmptyState text="Belum ada jadwal mendatang" />}
             {past.length > 0 && (
               <>
                 <h2 className="mb-6 mt-16 text-2xl font-black uppercase tracking-wide">Arsip</h2>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{past.map((k) => <KegiatanCard key={k.id} k={k} />)}</div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{past.map((k) => <KegiatanCard key={k.id} k={k} onView={() => setView(k)} />)}</div>
               </>
             )}
           </>
         )}
       </section>
+      <KegiatanDetail k={view} onOpenChange={(o) => !o && setView(null)} />
     </PublicLayout>
   );
 }
