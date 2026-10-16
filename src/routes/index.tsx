@@ -33,9 +33,9 @@ function Label({ children, light, n }: { children: string; light?: boolean; n?: 
   );
 }
 
-const H2 = "mt-3 text-4xl font-bold uppercase leading-[0.95] md:text-[56px]";
-const btnP = "inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary-dark";
-const btnS = "inline-flex items-center gap-2 rounded-sm border border-foreground/30 px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-colors hover:border-foreground";
+const H2 = "mt-3 text-4xl font-black uppercase leading-[0.95] tracking-wide md:text-[52px]";
+const btnP = "inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark";
+const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] transition-colors hover:border-primary";
 
 function Index() {
   const { data: kegiatan = [] } = useQuery(kegiatanQuery);
@@ -61,46 +61,42 @@ function Index() {
   return (
     <PublicLayout overlay>
       {/* HERO */}
-      <section className="relative flex min-h-[620px] items-end overflow-hidden md:min-h-[820px]">
-        <img src={convoyImg} alt="Konvoi armada rental di jalan pegunungan Jawa Barat" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover object-[60%_center]" />
-        <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="absolute inset-0 bg-bottom-fade" />
-        <div aria-hidden className="absolute bottom-24 right-8 hidden -rotate-12 text-right font-script text-primary lg:block"><div className="text-7xl">ARMI</div><div className="-mt-2 text-3xl text-foreground">Jawa Barat</div></div>
-        <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:pb-24">
-          <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em]"><span className="h-2.5 w-2.5 rounded-full bg-primary" />Wadah resmi pengusaha rental mobil Jawa Barat</span>
-          <h1 className="mt-5 -skew-x-6 font-script text-5xl uppercase leading-[1.02] sm:text-6xl lg:text-[86px]">
-            Satu Jaringan<br /><span className="text-primary">Satu Semangat</span><br />Tumbuh Bersama
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="absolute inset-0 bg-radial-glow" />
+        <img src={logoArmi.url} alt="" aria-hidden width={431} height={461} className="pointer-events-none absolute left-1/2 top-24 w-[720px] max-w-[95vw] -translate-x-1/2 opacity-[0.05] grayscale" />
+        <div className="relative mx-auto max-w-5xl px-5 pb-20 pt-36 text-center md:pb-28 md:pt-44">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/80">
+            <Shield className="h-3.5 w-3.5 text-primary" /> Wadah Resmi Pengusaha Rental Mobil Jawa Barat
+          </span>
+          <h1 className="mt-8 text-5xl font-black uppercase leading-[1] sm:text-6xl lg:text-[84px]">
+            Satu Jaringan. <span className="text-primary">Satu Semangat.</span><br />Tumbuh <span className="text-muted-foreground">Bersama.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/tentang" className={btnP}>Kenali ARMI <ArrowRight className="h-4 w-4" /></Link>
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Link to="/login" className={btnP}>Masuk Portal</Link>
             <Link to="/anggota" className={btnS}>Cari Anggota</Link>
           </div>
-          <p className="mt-10 border-l-2 border-primary pl-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Tri Arutala — Kebersamaan, Keamanan, Professionalitas
-          </p>
         </div>
-      </section>
-
-      {/* STATS */}
-      <section className="border-y border-border bg-card">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-6 md:grid-cols-[repeat(3,auto)_1fr] md:items-center md:gap-10">
-          {[
-            [Users, String(anggota.filter((a) => a.status === "aktif").length), "Anggota Aktif"],
-            [MapPin, "27", "Kabupaten/Kota"],
-            [Shield, "3", "Nilai Tri Arutala"],
-          ].map(([Icon, v, l]) => {
-            const I = Icon as typeof Users;
-            return (
-              <div key={l as string} className="flex items-center gap-3 md:border-r md:border-border md:pr-10">
-                <I className="h-8 w-8 text-primary" />
-                <div><div className="font-display text-3xl font-bold leading-none">{v as string}</div><div className="mt-1 text-xs text-muted-foreground">{l as string}</div></div>
-              </div>
-            );
-          })}
-          <p className="col-span-2 border-l-2 border-primary pl-4 text-lg leading-snug md:col-span-1">Bukan hanya bisnis,<br />ini tentang kebersamaan.</p>
+        <div className="relative border-y border-border bg-card/60 backdrop-blur">
+          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-5 py-10 md:grid-cols-4">
+            {[
+              [MapPin, "27", "Kabupaten / Kota"],
+              [Users, String(anggota.filter((a) => a.status === "aktif").length), "Anggota Aktif"],
+              [Network, String(kegiatan.length), "Kegiatan Tercatat"],
+              [Shield, "3", "Nilai Tri Arutala"],
+            ].map(([Icon, v, l]) => {
+              const I = Icon as typeof Users;
+              return (
+                <div key={l as string} className="text-center">
+                  <I className="mx-auto h-5 w-5 text-primary" />
+                  <div className="mt-3 font-display text-4xl font-black leading-none">{v as string}</div>
+                  <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{l as string}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

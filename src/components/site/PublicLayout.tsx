@@ -25,7 +25,7 @@ export function Brand({ sub = true }: { sub?: boolean }) {
     <span className="flex items-center gap-3">
       <LogoMark />
       <span className="leading-tight">
-        <span className="block font-display text-xl font-bold leading-none">ARMI <span className="text-sm">DPD JABAR</span></span>
+        <span className="block font-display text-base font-black uppercase tracking-[0.12em] leading-none"><span className="text-primary">ARMI</span> DPD JABAR</span>
         {sub && <span className="block text-[11px] text-muted-foreground">Anggota Rental Mobil Indonesia</span>}
       </span>
     </span>
@@ -50,15 +50,15 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
             {NAV.map((n) => (
               <Link key={n.to} to={n.to} activeOptions={{ exact: true }}
-                className="relative py-5 text-sm font-medium text-foreground/75 transition-colors hover:text-foreground"
-                activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary" }}>
+                className="relative py-5 text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60 transition-colors hover:text-foreground"
+                activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary !text-primary" }}>
                 {n.label}
               </Link>
             ))}
           </nav>
           <div className="hidden items-center gap-4 lg:flex">
-            <Link to="/login" className="text-sm font-medium text-foreground/80 hover:text-foreground">Masuk</Link>
-            <Link to="/kontak" className="rounded-sm bg-primary px-4 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary-dark">
+            <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary hover:text-foreground">Portal Login</Link>
+            <Link to="/kontak" className="rounded-md bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-glow transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
           </div>
@@ -116,7 +116,7 @@ export function PageHeading({ eyebrow, title, desc }: { eyebrow: string; title: 
   return (
     <div className="mb-10 max-w-3xl">
       <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80"><span className="text-primary">— </span>{eyebrow}</span>
-      <h1 className="mt-3 text-4xl font-bold uppercase leading-[0.95] md:text-5xl">{title}</h1>
+      <h1 className="mt-3 text-4xl font-black uppercase leading-[0.95] tracking-wide md:text-5xl">{title}</h1>
       {desc && <p className="mt-3 text-base text-muted-foreground">{desc}</p>}
     </div>
   );
@@ -129,7 +129,7 @@ export function PageHero({ image, eyebrow, title, desc }: { image: string; eyebr
       <div className="absolute inset-0 bg-hero-overlay" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28">
         <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80"><span className="text-primary">— </span>{eyebrow}</span>
-        <h1 className="mt-3 max-w-3xl text-4xl font-bold uppercase leading-[0.95] md:text-6xl">{title}</h1>
+        <h1 className="mt-3 max-w-3xl text-4xl font-black uppercase leading-[0.95] tracking-wide md:text-6xl">{title}</h1>
         <div aria-hidden className="mt-3 h-1.5 w-24 -skew-x-12 bg-primary" />
         {desc && <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">{desc}</p>}
       </div>
