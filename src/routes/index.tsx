@@ -161,16 +161,6 @@ function Index() {
               </figure>
             ))}
           </div>
-          {kegiatan.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-              {kegiatan.slice(0, 4).map((k) => (
-                <figure key={k.id} className="group relative overflow-hidden rounded-sm">
-                  <img src={k.foto} alt={k.judul} loading="lazy" width={600} height={400} className="aspect-[3/2] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <figcaption className="absolute left-2 top-2"><JenisBadge jenis={k.jenis} /></figcaption>
-                </figure>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 

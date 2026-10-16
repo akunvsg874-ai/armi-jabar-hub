@@ -50,14 +50,14 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
             {NAV.map((n) => (
               <Link key={n.to} to={n.to} activeOptions={{ exact: true }}
-                className="relative py-5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="relative py-5 text-sm font-medium text-foreground/75 transition-colors hover:text-foreground"
                 activeProps={{ className: "!text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary" }}>
                 {n.label}
               </Link>
             ))}
           </nav>
           <div className="hidden items-center gap-4 lg:flex">
-            <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">Masuk</Link>
+            <Link to="/login" className="text-sm font-medium text-foreground/80 hover:text-foreground">Masuk</Link>
             <Link to="/kontak" className="rounded-sm bg-primary px-4 py-2 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary-dark">
               Gabung ARMI
             </Link>
