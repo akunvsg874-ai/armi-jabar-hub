@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { KegiatanDetail } from "@/components/site/KegiatanDetail";
 import { Lightbox } from "@/components/site/Lightbox";
 import type { Kegiatan } from "@/components/site/shared";
@@ -39,6 +39,11 @@ const btnS = "inline-flex items-center gap-2 rounded-md border border-border bg-
 /** Hero background: wide photos fill the area; small/square images (e.g. logos) become an elegant centered emblem. */
 function HeroBg({ src }: { src: string }) {
   const [emblem, setEmblem] = useState<boolean | null>(null);
+  useEffect(() => {
+    const i = new Image();
+    i.onload = () => setEmblem(i.naturalWidth < 1200 || i.naturalWidth / i.naturalHeight < 1.3);
+    i.src = src;
+  }, [src]);
   return (
     <div aria-hidden className="absolute inset-0">
       {emblem ? (
@@ -49,7 +54,7 @@ function HeroBg({ src }: { src: string }) {
         </>
       ) : (
         <>
-          <img src={src} alt="" onLoad={(e) => { const i = e.currentTarget; setEmblem(i.naturalWidth < 1200 || i.naturalWidth / i.naturalHeight < 1.3); }}
+          <img src={src} alt=""
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${emblem === false ? "opacity-100" : "opacity-0"}`} />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/65 to-background" />
         </>
