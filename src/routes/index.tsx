@@ -1,13 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { KegiatanDetail } from "@/components/site/KegiatanDetail";
+import { Lightbox } from "@/components/site/Lightbox";
+import type { Kegiatan } from "@/components/site/shared";
 import { ArrowRight, MapPin, Search, Shield, Network, Scale, Users } from "lucide-react";
 import { PublicLayout, logoArmi } from "@/components/site/PublicLayout";
 import { JenisBadge, StatusBadge } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { WILAYAH_JABAR, todayISO } from "@/lib/armi";
-import { halamanQuery, seoMeta } from "@/lib/cms";
+import { halamanQuery, seoMeta, galeriQuery, artikelListQuery } from "@/lib/cms";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import heroImg from "@/assets/hero-cars.jpg";
 import convoyImg from "@/assets/convoy.jpg";
@@ -49,11 +52,18 @@ function Index() {
   }, [anggota]);
   const preview = anggota.filter((a) => a.status === "aktif").slice(0, 4);
 
-  const gallery = [
-    { src: convoyImg, label: "Konvoi", w: 1408, h: 1008 },
-    { src: communityImg, label: "Kopdar", w: 1408, h: 1008 },
-    { src: heroImg, label: "Armada", w: 1600, h: 912 },
-  ];
+  const { data: galeri = [] } = useQuery(galeriQuery);
+  const { data: artikel = [] } = useQuery(artikelListQuery);
+  const [view, setView] = useState<Kegiatan | null>(null);
+  const [lb, setLb] = useState<number | null>(null);
+  const gallery = galeri.length
+    ? galeri.slice(0, 5).map((g) => ({ src: g.gambar, label: g.judul || "Dokumentasi", w: 1200, h: 900 }))
+    : [
+        { src: convoyImg, label: "Konvoi", w: 1408, h: 1008 },
+        { src: communityImg, label: "Kopdar", w: 1408, h: 1008 },
+        { src: heroImg, label: "Armada", w: 1600, h: 912 },
+      ];
+  const terbaru = upcoming.length ? upcoming : [...kegiatan].slice(0, 3);
 
   return (
     <PublicLayout overlay>
@@ -158,11 +168,11 @@ function Index() {
               <p className="mt-2 -rotate-2 font-script text-2xl text-primary">Lebih dari sekadar komunitas</p>
               <p className="mt-4 text-muted-foreground">Dokumentasi kegiatan, pertemuan, dan momen kebersamaan anggota ARMI Jawa Barat.</p>
             </div>
-            <Link to="/agenda" className={btnS}>Lihat Semua Kegiatan</Link>
+            <Link to="/galeri" className={btnS}>Lihat Semua Galeri</Link>
           </div>
           <div className="mt-12 grid gap-3 md:grid-cols-3 md:grid-rows-2">
             {gallery.map((g, i) => (
-              <figure key={g.label} className={`group relative overflow-hidden rounded-sm ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
+              <figure key={i} onClick={() => setLb(i)} className={`group relative cursor-pointer overflow-hidden rounded-sm ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
                 <img src={g.src} alt={`Dokumentasi ${g.label.toLowerCase()}`} loading="lazy" width={g.w} height={g.h} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i === 0 ? "aspect-[4/3] md:h-full md:aspect-auto" : "aspect-[4/3]"}`} />
                 <figcaption className="absolute left-3 top-3 rounded-sm bg-background/80 px-2 py-1 text-[10px] font-bold uppercase tracking-widest">{g.label}</figcaption>
               </figure>
@@ -176,17 +186,17 @@ function Index() {
         <Label n="03">Agenda Komunitas</Label>
         <h2 className={`${H2} bar-mark`}>Kegiatan Terbaru</h2>
         <div className="mt-12 divide-y divide-border border-y border-border">
-          {upcoming.length ? upcoming.map((k) => {
+          {terbaru.length ? terbaru.map((k) => {
             const d = new Date(k.tanggal + "T00:00:00");
             return (
-              <div key={k.id} className="grid gap-4 py-7 md:grid-cols-[120px_1fr_auto] md:items-center">
+              <div key={k.id} onClick={() => setView(k)} className="grid cursor-pointer gap-4 py-7 transition-colors hover:bg-card/60 md:grid-cols-[120px_1fr_auto] md:items-center">
                 <div className="flex items-baseline gap-2 md:block">
                   <div className="text-5xl font-extrabold leading-none tracking-tight">{String(d.getDate()).padStart(2, "0")}</div>
                   <div className="text-sm font-bold tracking-widest text-primary">{BULAN[d.getMonth()]} {d.getFullYear()}</div>
                 </div>
                 <div>
                   <JenisBadge jenis={k.jenis} />
-                  <h3 className="mt-2 text-xl font-bold">{k.judul}</h3>
+                  <h3 className="mt-2 text-xl font-bold hover:text-primary">{k.judul}</h3>
                   <p className="mt-1 line-clamp-2 max-w-2xl text-sm text-muted-foreground">{k.deskripsi}</p>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{k.lokasi}</div>
@@ -199,6 +209,29 @@ function Index() {
           )}
         </div>
       </section>
+
+      {/* ARTIKEL */}
+      {artikel.length > 0 && (
+        <section className="border-t border-border bg-card py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-5">
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div><Label n="04">Kabar & Wawasan</Label><h2 className={`${H2} bar-mark`}>Artikel Terbaru</h2></div>
+              <Link to="/artikel" className={btnS}>Semua Artikel</Link>
+            </div>
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {artikel.slice(0, 3).map((a) => (
+                <Link key={a.id} to="/artikel/$slug" params={{ slug: a.slug }} className="group overflow-hidden rounded-lg border border-border bg-background transition-colors hover:border-primary">
+                  {a.gambar && <img src={a.gambar} alt={a.judul} loading="lazy" className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold leading-snug group-hover:text-primary">{a.judul}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{a.ringkasan}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* REGIONAL + DIRECTORY */}
       <section className="border-y border-border bg-ivory text-ink">
@@ -286,6 +319,8 @@ function Index() {
           </div>
         </div>
       </section>
+      <KegiatanDetail k={view} onOpenChange={(o) => !o && setView(null)} />
+      <Lightbox items={gallery.map((g) => ({ src: g.src, alt: g.label, caption: g.label }))} open={lb !== null} onOpenChange={(o) => !o && setLb(null)} startIndex={lb ?? 0} />
     </PublicLayout>
   );
 }
