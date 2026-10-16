@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as AnggotaRouteImport } from './routes/anggota'
+import { Route as GabungRouteImport } from './routes/gabung'
 import { Route as GaleriRouteImport } from './routes/galeri'
 import { Route as InfoKegiatanRouteImport } from './routes/info-kegiatan'
 import { Route as JadwalEksekusiRouteImport } from './routes/jadwal-eksekusi'
@@ -45,6 +46,11 @@ const AgendaRoute = AgendaRouteImport.update({
 const AnggotaRoute = AnggotaRouteImport.update({
   id: '/anggota',
   path: '/anggota',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GabungRoute = GabungRouteImport.update({
+  id: '/gabung',
+  path: '/gabung',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GaleriRoute = GaleriRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/gabung': typeof GabungRoute
   '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
   '/jadwal-eksekusi': typeof JadwalEksekusiRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/gabung': typeof GabungRoute
   '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
   '/jadwal-eksekusi': typeof JadwalEksekusiRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/agenda': typeof AgendaRoute
   '/anggota': typeof AnggotaRoute
+  '/gabung': typeof GabungRoute
   '/galeri': typeof GaleriRoute
   '/info-kegiatan': typeof InfoKegiatanRoute
   '/jadwal-eksekusi': typeof JadwalEksekusiRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agenda'
     | '/anggota'
+    | '/gabung'
     | '/galeri'
     | '/info-kegiatan'
     | '/jadwal-eksekusi'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agenda'
     | '/anggota'
+    | '/gabung'
     | '/galeri'
     | '/info-kegiatan'
     | '/jadwal-eksekusi'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/agenda'
     | '/anggota'
+    | '/gabung'
     | '/galeri'
     | '/info-kegiatan'
     | '/jadwal-eksekusi'
@@ -244,6 +256,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AgendaRoute: typeof AgendaRoute
   AnggotaRoute: typeof AnggotaRoute
+  GabungRoute: typeof GabungRoute
   GaleriRoute: typeof GaleriRoute
   InfoKegiatanRoute: typeof InfoKegiatanRoute
   JadwalEksekusiRoute: typeof JadwalEksekusiRoute
@@ -282,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/anggota'
       fullPath: '/anggota'
       preLoaderRoute: typeof AnggotaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gabung': {
+      id: '/gabung'
+      path: '/gabung'
+      fullPath: '/gabung'
+      preLoaderRoute: typeof GabungRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/galeri': {
@@ -411,6 +431,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AgendaRoute: AgendaRoute,
   AnggotaRoute: AnggotaRoute,
+  GabungRoute: GabungRoute,
   GaleriRoute: GaleriRoute,
   InfoKegiatanRoute: InfoKegiatanRoute,
   JadwalEksekusiRoute: JadwalEksekusiRoute,

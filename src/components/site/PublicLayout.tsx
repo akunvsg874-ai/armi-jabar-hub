@@ -137,7 +137,7 @@ export function PublicLayout({ children, overlay = false }: { children: ReactNod
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Organisasi</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/tentang" className="hover:text-primary">Profil & Visi Misi</Link></li>
-              <li><Link to="/kontak" className="hover:text-primary">Informasi Keanggotaan</Link></li>
+              <li><Link to="/gabung" className="hover:text-primary">Gabung Menjadi Anggota</Link></li>
               <li><Link to="/login" className="hover:text-primary">Portal Anggota</Link></li>
             </ul>
           </div>

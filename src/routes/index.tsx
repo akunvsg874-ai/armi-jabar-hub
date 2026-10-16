@@ -281,7 +281,7 @@ function Index() {
           <h2 className="max-w-3xl text-4xl font-bold uppercase leading-[0.95] tracking-tight md:text-6xl">Jadilah Bagian dari <span className="text-primary">Perjalanan Kita.</span></h2>
           <p className="mt-5 max-w-xl text-muted-foreground">Bangun jaringan, bertukar pengalaman, dan tumbuh bersama pelaku usaha rental mobil di Jawa Barat.</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/kontak" className={btnP}>Informasi Keanggotaan</Link>
+            <Link to="/gabung" className={btnP}>Gabung Menjadi Anggota</Link>
             <Link to="/kontak" className={btnS}>Hubungi Pengurus</Link>
           </div>
         </div>
