@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, Users, FileText, Newspaper, Images, UserPlus, ShieldAlert, Wallet, CalendarDays, UserCircle, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Newspaper, Images, UserPlus, ShieldAlert, Wallet, CalendarDays, UserCircle, LogOut, Menu, X, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery, type Role } from "@/lib/session";
 import { LogoMark } from "@/components/site/PublicLayout";
@@ -83,6 +83,9 @@ function PortalLayout() {
         </Link>
         <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Menu</div>
         {nav}
+        <Link to="/" className="mt-4 flex items-center gap-3 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold text-foreground hover:border-primary hover:text-primary">
+          <Globe className="h-4 w-4" /> Lihat Website
+        </Link>
         <button onClick={logout} className="mt-4 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/10">
           <LogOut className="h-4 w-4" /> Logout
         </button>
