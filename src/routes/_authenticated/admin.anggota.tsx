@@ -119,6 +119,7 @@ function Page() {
           <tr key={a.id}>
             <td className={`${td} whitespace-nowrap font-mono text-xs`}>{a.nomor_anggota}</td>
             <td className={`${td} whitespace-nowrap font-mono text-xs`}>{(a as { no_anggota?: string | null }).no_anggota ?? "—"}</td>
+            <td className={`${td} font-semibold`}>{a.nama_lengkap}</td>
             <td className={td}>{a.nama_usaha}</td>
             <td className={td}>{a.wilayah}</td>
             <td className={td}>{Array.isArray((a as { unit?: unknown }).unit) ? ((a as { unit: unknown[] }).unit.length) : 0}</td>
