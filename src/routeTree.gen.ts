@@ -34,6 +34,7 @@ import { Route as AuthenticatedAdminArtikelRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminGaleriRouteImport } from './routes/_authenticated/admin.galeri'
 import { Route as AuthenticatedAdminHalamanRouteImport } from './routes/_authenticated/admin.halaman'
 import { Route as AuthenticatedAdminPendaftaranRouteImport } from './routes/_authenticated/admin.pendaftaran'
+import { Route as AuthenticatedAdminSkRouteImport } from './routes/_authenticated/admin.sk'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -164,6 +165,11 @@ const AuthenticatedAdminPendaftaranRoute =
     path: '/admin/pendaftaran',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminSkRoute = AuthenticatedAdminSkRouteImport.update({
+  id: '/admin/sk',
+  path: '/admin/sk',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
   '/admin/halaman': typeof AuthenticatedAdminHalamanRoute
   '/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
+  '/admin/sk': typeof AuthenticatedAdminSkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
   '/admin/halaman': typeof AuthenticatedAdminHalamanRoute
   '/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
+  '/admin/sk': typeof AuthenticatedAdminSkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/galeri': typeof AuthenticatedAdminGaleriRoute
   '/_authenticated/admin/halaman': typeof AuthenticatedAdminHalamanRoute
   '/_authenticated/admin/pendaftaran': typeof AuthenticatedAdminPendaftaranRoute
+  '/_authenticated/admin/sk': typeof AuthenticatedAdminSkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/galeri'
     | '/admin/halaman'
     | '/admin/pendaftaran'
+    | '/admin/sk'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/admin/galeri'
     | '/admin/halaman'
     | '/admin/pendaftaran'
+    | '/admin/sk'
   id:
     | '__root__'
     | '/'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/galeri'
     | '/_authenticated/admin/halaman'
     | '/_authenticated/admin/pendaftaran'
+    | '/_authenticated/admin/sk'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -522,6 +534,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPendaftaranRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/sk': {
+      id: '/_authenticated/admin/sk'
+      path: '/admin/sk'
+      fullPath: '/admin/sk'
+      preLoaderRoute: typeof AuthenticatedAdminSkRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -536,6 +555,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminGaleriRoute: typeof AuthenticatedAdminGaleriRoute
   AuthenticatedAdminHalamanRoute: typeof AuthenticatedAdminHalamanRoute
   AuthenticatedAdminPendaftaranRoute: typeof AuthenticatedAdminPendaftaranRoute
+  AuthenticatedAdminSkRoute: typeof AuthenticatedAdminSkRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -549,6 +569,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminGaleriRoute: AuthenticatedAdminGaleriRoute,
   AuthenticatedAdminHalamanRoute: AuthenticatedAdminHalamanRoute,
   AuthenticatedAdminPendaftaranRoute: AuthenticatedAdminPendaftaranRoute,
+  AuthenticatedAdminSkRoute: AuthenticatedAdminSkRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
