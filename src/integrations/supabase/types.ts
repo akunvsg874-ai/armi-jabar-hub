@@ -323,6 +323,83 @@ export type Database = {
         }
         Relationships: []
       }
+      surat_keputusan: {
+        Row: {
+          anggota_id: string | null
+          created_at: string
+          created_by: string | null
+          diktum_lain: Json
+          ditetapkan_di: string
+          id: string
+          jabatan: string
+          jabatan_penandatangan: string
+          kode: string
+          mengingat: Json
+          menimbang: Json
+          nama_penandatangan: string
+          nama_penerima: string
+          nomor: string
+          status: string
+          tanggal_ditetapkan: string
+          tentang: string
+          tingkat: string
+          ttd_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          anggota_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          diktum_lain?: Json
+          ditetapkan_di?: string
+          id?: string
+          jabatan: string
+          jabatan_penandatangan?: string
+          kode?: string
+          mengingat?: Json
+          menimbang?: Json
+          nama_penandatangan: string
+          nama_penerima: string
+          nomor: string
+          status?: string
+          tanggal_ditetapkan?: string
+          tentang?: string
+          tingkat?: string
+          ttd_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          anggota_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          diktum_lain?: Json
+          ditetapkan_di?: string
+          id?: string
+          jabatan?: string
+          jabatan_penandatangan?: string
+          kode?: string
+          mengingat?: Json
+          menimbang?: Json
+          nama_penandatangan?: string
+          nama_penerima?: string
+          nomor?: string
+          status?: string
+          tanggal_ditetapkan?: string
+          tentang?: string
+          tingkat?: string
+          ttd_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "surat_keputusan_anggota_id_fkey"
+            columns: ["anggota_id"]
+            isOneToOne: false
+            referencedRelation: "anggota"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transaksi: {
         Row: {
           created_at: string
@@ -427,6 +504,27 @@ export type Database = {
       next_nomor_anggota: { Args: never; Returns: string }
       peek_nomor_anggota: { Args: never; Returns: string }
       statistik_publik: { Args: never; Returns: Json }
+      verifikasi_sk: {
+        Args: { _kode: string }
+        Returns: {
+          diktum_lain: Json
+          ditetapkan_di: string
+          jabatan: string
+          jabatan_penandatangan: string
+          kode: string
+          mengingat: Json
+          menimbang: Json
+          nama_penandatangan: string
+          nama_penerima: string
+          nomor: string
+          status: string
+          tanggal_ditetapkan: string
+          tentang: string
+          tingkat: string
+          ttd_url: string
+          updated_at: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "bendahara" | "anggota"

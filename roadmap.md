@@ -1,1 +1,2 @@
 - [x] Hero beranda: logo ARMI & DPD berdampingan sebagai latar belakang, ukuran besar dan berjarak
+- [x] Generate SK anggota sesuai template + QR Code verifikasi (admin Generate SK, halaman /verifikasi-sk)

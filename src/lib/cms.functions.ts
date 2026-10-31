@@ -41,3 +41,12 @@ export const listGaleri = createServerFn({ method: "GET" }).handler(async () => 
   const { data } = await publicClient().from("galeri").select("*").order("urutan").order("created_at", { ascending: false });
   return data ?? [];
 });
+
+/** Public SK verification by QR code token or printed SK number. */
+export const getSk = createServerFn({ method: "GET" })
+  .inputValidator((d: { kode: string }) => z.object({ kode: z.string().trim().min(1).max(120) }).parse(d))
+  .handler(async ({ data }) => {
+    const { data: rows, error } = await publicClient().rpc("verifikasi_sk", { _kode: data.kode });
+    if (error) { console.error("verifikasi_sk", error.message); return null; }
+    return rows?.[0] ?? null;
+  });
