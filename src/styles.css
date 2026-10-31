@@ -37,6 +37,10 @@
   --color-success: var(--success);
   --color-info: var(--info);
   --color-armi-green: var(--armi-green);
+  --color-paper: var(--paper);
+  --color-paper-foreground: var(--paper-foreground);
+  --color-paper-line: var(--paper-line);
+  --color-paper-muted: var(--paper-muted);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -77,6 +81,10 @@
   --success: oklch(0.75 0.17 150);
   --info: oklch(0.68 0.15 250);
   --armi-green: oklch(0.42 0.12 145); /* #1B5E20 */
+  --paper: oklch(1 0 0);
+  --paper-foreground: oklch(0.12 0 0);
+  --paper-line: oklch(0.72 0 0);
+  --paper-muted: oklch(0.45 0 0);
   --border: oklch(0.25 0 0);
   --input: oklch(0.34 0 0);
   --ring: oklch(0.67 0.21 37);
@@ -183,4 +191,14 @@
 
 @utility bg-radial-glow {
   background: var(--gradient-radial);
+}
+
+/* Surat Keputusan: printed as a white A4 sheet; everything else is hidden in print. */
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { background: var(--color-paper) !important; color-scheme: light; }
+  body * { visibility: hidden; }
+  .sk-print, .sk-print * { visibility: visible; }
+  .sk-print { position: absolute; left: 0; top: 0; transform: none !important; box-shadow: none !important; }
+  .sk-scaler { height: auto !important; }
 }
