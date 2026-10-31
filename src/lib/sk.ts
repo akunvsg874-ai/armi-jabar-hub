@@ -78,3 +78,9 @@ export function defaultSk(jabatan = "Koordinator Keanggotaan", tingkat = "Dewan 
     ttd_url: null,
   };
 }
+
+type SkRow = { kode: string; nomor: string; tentang: string; nama_penerima: string; jabatan: string; tingkat: string; menimbang: unknown; mengingat: unknown; diktum_lain: unknown;
+  ditetapkan_di: string; tanggal_ditetapkan: string; jabatan_penandatangan: string; nama_penandatangan: string; ttd_url: string | null; status: string };
+export function rowToSk(r: SkRow): SkData {
+  return { ...r, menimbang: asList(r.menimbang), mengingat: asList(r.mengingat), diktum_lain: asList(r.diktum_lain), status: r.status === "dicabut" ? "dicabut" : "aktif" };
+}
