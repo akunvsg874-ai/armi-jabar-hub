@@ -58,7 +58,7 @@ function Page() {
                 <span className={`h-1.5 w-1.5 rounded-full ${valid ? "bg-success" : "bg-destructive"}`} />
                 {valid ? "Terverifikasi asli" : "SK sudah dicabut"}
               </span>
-              <h1 className="mt-3 text-[1.6rem] font-black uppercase leading-[1.05] sm:text-3xl md:text-4xl">
+              <h1 className="mt-3 text-[1.35rem] font-black uppercase leading-[1.1] sm:text-3xl md:text-4xl">
                 {valid ? <>SK Resmi <span className="block sm:inline">DPD ARMI Jawa Barat</span></> : "SK Ini Tidak Berlaku Lagi"}
               </h1>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:mx-0">
@@ -68,7 +68,7 @@ function Page() {
             </div>
           </div>
 
-          <dl className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-[1.45fr_1fr_1fr_0.85fr]">
             {details.map(([k, v, wide]) => (
               <div key={k} className={`min-w-0 bg-card px-5 py-4 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
                 <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{k}</dt>
