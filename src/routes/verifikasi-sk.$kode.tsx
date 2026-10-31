@@ -42,8 +42,8 @@ function Page() {
 
   const valid = sk.status === "aktif";
   const tone = valid ? "text-success" : "text-destructive";
-  const details: [string, string, boolean?][] = [
-    ["Nomor SK", sk.nomor, true], ["Nama", sk.nama_penerima], ["Jabatan", sk.jabatan], ["Ditetapkan", formatTanggal(sk.tanggal_ditetapkan)],
+  const details: [string, string, boolean][] = [
+    ["Nomor SK", sk.nomor, true], ["Nama", sk.nama_penerima, true], ["Jabatan", sk.jabatan, false], ["Ditetapkan", formatTanggal(sk.tanggal_ditetapkan), false],
   ];
   return (
     <PublicLayout>
@@ -70,9 +70,9 @@ function Page() {
 
           <dl className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4">
             {details.map(([k, v, wide]) => (
-              <div key={k} className={`min-w-0 bg-card px-5 py-4 ${wide ? "col-span-2 lg:col-span-1" : ""} ${k === "Jabatan" ? "col-span-2 sm:col-span-1" : ""}`}>
+              <div key={k} className={`min-w-0 bg-card px-5 py-4 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
                 <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{k}</dt>
-                <dd className={`mt-1 break-words text-sm font-semibold ${wide ? "font-mono" : ""}`}>{v}</dd>
+                <dd className={`mt-1 break-words text-sm font-semibold ${k === "Nomor SK" ? "font-mono" : ""}`}>{v}</dd>
               </div>
             ))}
           </dl>
