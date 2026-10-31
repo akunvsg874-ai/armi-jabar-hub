@@ -27,6 +27,8 @@ import { Route as AuthenticatedKeuanganRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as ArtikelIndexRouteImport } from './routes/artikel.index'
 import { Route as ArtikelSlugRouteImport } from './routes/artikel.$slug'
+import { Route as VerifikasiSkIndexRouteImport } from './routes/verifikasi-sk.index'
+import { Route as VerifikasiSkKodeRouteImport } from './routes/verifikasi-sk.$kode'
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 import { Route as AuthenticatedAdminArtikelRouteImport } from './routes/_authenticated/admin.artikel'
 import { Route as AuthenticatedAdminGaleriRouteImport } from './routes/_authenticated/admin.galeri'
@@ -122,6 +124,16 @@ const ArtikelSlugRoute = ArtikelSlugRouteImport.update({
   path: '/artikel/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifikasiSkIndexRoute = VerifikasiSkIndexRouteImport.update({
+  id: '/verifikasi-sk/',
+  path: '/verifikasi-sk/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifikasiSkKodeRoute = VerifikasiSkKodeRouteImport.update({
+  id: '/verifikasi-sk/$kode',
+  path: '/verifikasi-sk/$kode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminAnggotaRoute =
   AuthenticatedAdminAnggotaRouteImport.update({
     id: '/admin/anggota',
@@ -170,7 +182,9 @@ export interface FileRoutesByFullPath {
   '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/artikel/$slug': typeof ArtikelSlugRoute
+  '/verifikasi-sk/$kode': typeof VerifikasiSkKodeRoute
   '/artikel/': typeof ArtikelIndexRoute
+  '/verifikasi-sk/': typeof VerifikasiSkIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/admin/artikel': typeof AuthenticatedAdminArtikelRoute
   '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
@@ -194,7 +208,9 @@ export interface FileRoutesByTo {
   '/keuangan': typeof AuthenticatedKeuanganRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/artikel/$slug': typeof ArtikelSlugRoute
+  '/verifikasi-sk/$kode': typeof VerifikasiSkKodeRoute
   '/artikel': typeof ArtikelIndexRoute
+  '/verifikasi-sk': typeof VerifikasiSkIndexRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/admin/artikel': typeof AuthenticatedAdminArtikelRoute
   '/admin/galeri': typeof AuthenticatedAdminGaleriRoute
@@ -220,7 +236,9 @@ export interface FileRoutesById {
   '/_authenticated/keuangan': typeof AuthenticatedKeuanganRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/artikel/$slug': typeof ArtikelSlugRoute
+  '/verifikasi-sk/$kode': typeof VerifikasiSkKodeRoute
   '/artikel/': typeof ArtikelIndexRoute
+  '/verifikasi-sk/': typeof VerifikasiSkIndexRoute
   '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/_authenticated/admin/artikel': typeof AuthenticatedAdminArtikelRoute
   '/_authenticated/admin/galeri': typeof AuthenticatedAdminGaleriRoute
@@ -246,7 +264,9 @@ export interface FileRouteTypes {
     | '/keuangan'
     | '/profil'
     | '/artikel/$slug'
+    | '/verifikasi-sk/$kode'
     | '/artikel/'
+    | '/verifikasi-sk/'
     | '/admin/anggota'
     | '/admin/artikel'
     | '/admin/galeri'
@@ -270,7 +290,9 @@ export interface FileRouteTypes {
     | '/keuangan'
     | '/profil'
     | '/artikel/$slug'
+    | '/verifikasi-sk/$kode'
     | '/artikel'
+    | '/verifikasi-sk'
     | '/admin/anggota'
     | '/admin/artikel'
     | '/admin/galeri'
@@ -295,7 +317,9 @@ export interface FileRouteTypes {
     | '/_authenticated/keuangan'
     | '/_authenticated/profil'
     | '/artikel/$slug'
+    | '/verifikasi-sk/$kode'
     | '/artikel/'
+    | '/verifikasi-sk/'
     | '/_authenticated/admin/anggota'
     | '/_authenticated/admin/artikel'
     | '/_authenticated/admin/galeri'
@@ -316,7 +340,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   TentangRoute: typeof TentangRoute
   ArtikelSlugRoute: typeof ArtikelSlugRoute
+  VerifikasiSkKodeRoute: typeof VerifikasiSkKodeRoute
   ArtikelIndexRoute: typeof ArtikelIndexRoute
+  VerifikasiSkIndexRoute: typeof VerifikasiSkIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -447,6 +473,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArtikelSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verifikasi-sk/': {
+      id: '/verifikasi-sk/'
+      path: '/verifikasi-sk'
+      fullPath: '/verifikasi-sk/'
+      preLoaderRoute: typeof VerifikasiSkIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verifikasi-sk/$kode': {
+      id: '/verifikasi-sk/$kode'
+      path: '/verifikasi-sk/$kode'
+      fullPath: '/verifikasi-sk/$kode'
+      preLoaderRoute: typeof VerifikasiSkKodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/anggota': {
       id: '/_authenticated/admin/anggota'
       path: '/admin/anggota'
@@ -527,7 +567,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   TentangRoute: TentangRoute,
   ArtikelSlugRoute: ArtikelSlugRoute,
+  VerifikasiSkKodeRoute: VerifikasiSkKodeRoute,
   ArtikelIndexRoute: ArtikelIndexRoute,
+  VerifikasiSkIndexRoute: VerifikasiSkIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
