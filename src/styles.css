@@ -196,7 +196,7 @@
 /* Surat Keputusan: printed as a white A4 sheet; everything else is hidden in print. */
 @page { size: A4; margin: 0; }
 @media print {
-  html, body { background: var(--color-paper) !important; color-scheme: light; }
+  html, body { background: var(--color-paper) !important; color-scheme: light; height: 297mm !important; overflow: hidden !important; }
   body * { visibility: hidden; }
   .sk-print, .sk-print * { visibility: visible; }
   .sk-print { position: fixed; left: 0; top: 0; height: 297mm; overflow: hidden; box-shadow: none !important; }
