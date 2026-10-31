@@ -69,7 +69,7 @@ export function SkDocument({ sk, qr }: { sk: Omit<SkData, "kode" | "status"> & {
         <img src={logoDpd.url} alt="Logo DPD ARMI Jawa Barat" style={{ width: "34mm", height: "34mm", objectFit: "contain" }} />
         <div className="relative" style={{ width: "150mm" }}>
           <img src={wordmark.url} alt="ARMI — Anggota Rental Mobil Indonesia" style={{ width: "150mm", display: "block" }} />
-          <div className="absolute font-bold" style={{ ...SERIF, left: "10mm", right: "0", bottom: "-5.5mm", fontSize: "17pt", letterSpacing: "0.02em", textAlign: "center", paddingRight: "16mm" }}>
+          <div className="absolute whitespace-nowrap font-bold" style={{ ...SERIF, left: "13mm", top: "28.5mm", fontSize: "16.5pt", lineHeight: 1, letterSpacing: "0.01em" }}>
             DEWAN PIMPINAN DAERAH JAWA BARAT
           </div>
         </div>
@@ -106,9 +106,9 @@ export function SkDocument({ sk, qr }: { sk: Omit<SkData, "kode" | "status"> & {
             : <div className="mx-auto border border-dashed border-paper-line" style={{ width: "32mm", height: "32mm" }} />}
           <div className="text-paper-muted" style={{ fontSize: "7pt", lineHeight: 1.25, marginTop: "1mm" }}>Scan untuk verifikasi keaslian SK di dpdarmijabar.com</div>
         </div>
-        <div style={{ width: "86mm" }}>
-          <div className="flex"><span style={{ width: "28mm" }}>Ditetapkan di</span><span>: {sk.ditetapkan_di}</span></div>
-          <div className="flex"><span style={{ width: "28mm" }}>Pada Tanggal</span><span>: {sk.tanggal_ditetapkan ? formatTanggal(sk.tanggal_ditetapkan) : "…"}</span></div>
+        <div style={{ width: "100mm" }}>
+          <div className="flex"><span className="shrink-0" style={{ width: "27mm" }}>Ditetapkan di</span><span>: {sk.ditetapkan_di}</span></div>
+          <div className="flex"><span className="shrink-0" style={{ width: "27mm" }}>Pada Tanggal</span><span>: {sk.tanggal_ditetapkan ? formatTanggal(sk.tanggal_ditetapkan) : "…"}</span></div>
           <div className="text-right" style={{ marginTop: "5mm", fontSize: "13pt" }}>{sk.jabatan_penandatangan}</div>
           {sk.ttd_url
             ? <img src={sk.ttd_url} alt="Tanda tangan" className="ml-auto" style={{ height: "20mm", objectFit: "contain", marginTop: "2mm" }} />
