@@ -199,6 +199,6 @@
   html, body { background: var(--color-paper) !important; color-scheme: light; }
   body * { visibility: hidden; }
   .sk-print, .sk-print * { visibility: visible; }
-  .sk-print { position: fixed; left: 0; top: 0; box-shadow: none !important; }
+  .sk-print { position: fixed; left: 0; top: 0; height: 297mm; overflow: hidden; box-shadow: none !important; }
   .sk-scaler > div { transform: none !important; }
 }

@@ -63,7 +63,7 @@ export function SkDocument({ sk, qr }: { sk: Omit<SkData, "kode" | "status"> & {
   const diktum = [diktumPertama(sk.nama_penerima, sk.jabatan, sk.tingkat), ...sk.diktum_lain.filter((d) => d.trim())];
   return (
     <div className="sk-print relative flex flex-col bg-paper text-paper-foreground shadow-2xl"
-      style={{ ...FONT, width: "210mm", minHeight: "297mm", padding: "5mm 18mm 8mm 20mm", fontSize: "12pt", lineHeight: 1.45, boxSizing: "border-box" }}>
+      style={{ ...FONT, width: "210mm", minHeight: "297mm", padding: "5mm 18mm 6mm 20mm", fontSize: "12pt", lineHeight: 1.32, boxSizing: "border-box" }}>
       {/* Kop surat */}
       <header className="flex items-start" style={{ marginLeft: "-17mm", gap: "8mm" }}>
         <img src={logoDpd.url} alt="Logo DPD ARMI Jawa Barat" style={{ width: "34mm", height: "34mm", objectFit: "contain" }} />
@@ -93,17 +93,17 @@ export function SkDocument({ sk, qr }: { sk: Omit<SkData, "kode" | "status"> & {
         <Row label="Mengingat"><LetteredList items={sk.mengingat.filter((x) => x.trim())} /></Row>
       </div>
 
-      <div className="text-center" style={{ marginTop: "11mm" }}>MEMUTUSKAN</div>
-      <div style={{ marginTop: "10mm" }}>Menetapkan :</div>
-      <div style={{ marginTop: "5mm" }}>
+      <div className="text-center" style={{ marginTop: "8mm" }}>MEMUTUSKAN</div>
+      <div style={{ marginTop: "7mm" }}>Menetapkan :</div>
+      <div style={{ marginTop: "4mm" }}>
         {diktum.map((d, i) => <Row key={i} label={diktumLabel(i)}>{d}</Row>)}
       </div>
 
       {/* Pengesahan */}
-      <div className="flex items-end justify-between" style={{ marginTop: "14mm" }}>
+      <div className="flex items-end justify-between" style={{ marginTop: "10mm" }}>
         <div className="text-center" style={{ width: "40mm" }}>
-          {qr ? <img src={qr} alt="QR Code verifikasi SK" style={{ width: "32mm", height: "32mm", margin: "0 auto" }} />
-            : <div className="mx-auto border border-dashed border-paper-line" style={{ width: "32mm", height: "32mm" }} />}
+          {qr ? <img src={qr} alt="QR Code verifikasi SK" style={{ width: "30mm", height: "30mm", margin: "0 auto" }} />
+            : <div className="mx-auto border border-dashed border-paper-line" style={{ width: "30mm", height: "30mm" }} />}
           <div className="text-paper-muted" style={{ fontSize: "7pt", lineHeight: 1.25, marginTop: "1mm" }}>Scan untuk verifikasi keaslian SK di dpdarmijabar.com</div>
         </div>
         <div style={{ width: "100mm" }}>
@@ -119,7 +119,7 @@ export function SkDocument({ sk, qr }: { sk: Omit<SkData, "kode" | "status"> & {
       </div>
 
       <div className="flex-1" />
-      <hr className="border-0 bg-paper-line" style={{ height: "0.35mm", margin: "10mm 0 0" }} />
+      <hr className="border-0 bg-paper-line" style={{ height: "0.35mm", margin: "6mm 0 0" }} />
     </div>
   );
 }
