@@ -12,15 +12,13 @@ import { ImageInput } from "@/components/portal/ImageInput";
 import { SkDocument, SkScaler, useSkQr } from "@/components/sk/SkDocument";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-const skListQuery = queryOptions({
-  queryKey: ["sk-list"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("surat_keputusan").select("*").order("created_at", { ascending: false });
-    if (error) throw error;
-    return data;
-  },
-});
-type SkRow = NonNullable<Awaited<ReturnType<typeof skListQuery.queryFn>>>[number];
+async function fetchSkList() {
+  const { data, error } = await supabase.from("surat_keputusan").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+const skListQuery = queryOptions({ queryKey: ["sk-list"], queryFn: fetchSkList });
+type SkRow = Awaited<ReturnType<typeof fetchSkList>>[number];
 
 export const Route = createFileRoute("/_authenticated/admin/sk")({
   beforeLoad: ({ context }) => { if (context.me.role !== "admin") throw redirect({ to: "/dashboard" }); },
@@ -89,7 +87,7 @@ function Page() {
     setSaving(true);
     const res = editing
       ? await supabase.from("surat_keputusan").update(payload).eq("id", editing.id).select().single()
-      : await supabase.from("surat_keputusan").insert({ ...payload, created_by: (await supabase.auth.getUser()).data.user?.id }).select().single();
+      : await supabase.from("surat_keputusan").insert({ ...payload, created_by: (await supabase.auth.getUser()).data.user?.id ?? null }).select().single();
     setSaving(false);
     if (res.error) return void toast.error(res.error.code === "23505" ? "Nomor SK sudah dipakai SK lain" : "Gagal menyimpan SK");
     toast.success(editing ? "SK diperbarui" : "SK berhasil dibuat, QR Code siap");
@@ -140,7 +138,7 @@ function Page() {
             </Field>
             <button type="button" className={btnSecondary} onClick={() => {
               const d = defaultSk(form.jabatan, form.tingkat);
-              setForm({ ...form, tentang: d.tentang, menimbang: [d.menimbang[0], ...form.menimbang.slice(1)] });
+              setForm({ ...form, tentang: d.tentang, menimbang: [d.menimbang[0] ?? "", ...form.menimbang.slice(1)] });
               toast.success("Tentang & Menimbang (a) disesuaikan dengan jabatan");
             }}><Wand2 className="h-4 w-4" /> Sesuaikan teks dengan jabatan</button>
 

@@ -19,13 +19,13 @@ export function toRoman(n: number): string {
 
 /** Suggested SK number in the template's pattern: <urut>/XVII/ARMI-DPD/<bulan romawi>/<tahun>. */
 export function suggestNomor(urut: number, tanggalISO: string = todayISO()): string {
-  const [y, m] = tanggalISO.split("-").map(Number);
+  const [y = 2026, m = 1] = tanggalISO.split("-").map(Number);
   return `${urut}/XVII/ARMI-DPD/${toRoman(m)}/${y}`;
 }
 
 /** Highest leading sequence among existing SK numbers + 1 (starts after the template's 41736). */
 export function nextUrut(nomors: string[]): number {
-  const nums = nomors.map((n) => parseInt(n.split("/")[0], 10)).filter((n) => Number.isFinite(n));
+  const nums = nomors.map((n) => parseInt(n.split("/")[0] ?? "", 10)).filter((n) => Number.isFinite(n));
   return nums.length ? Math.max(...nums) + 1 : 41737;
 }
 
