@@ -41,29 +41,54 @@ function Page() {
   );
 
   const valid = sk.status === "aktif";
+  const tone = valid ? "text-success" : "text-destructive";
+  const details: [string, string, boolean?][] = [
+    ["Nomor SK", sk.nomor, true], ["Nama", sk.nama_penerima], ["Jabatan", sk.jabatan], ["Ditetapkan", formatTanggal(sk.tanggal_ditetapkan)],
+  ];
   return (
     <PublicLayout>
-      <section className="mx-auto max-w-5xl px-5 py-12">
-        <div className={`flex flex-wrap items-center gap-5 rounded-xl border p-6 ${valid ? "border-success/50 bg-success/10" : "border-destructive/50 bg-destructive/10"}`}>
-          {valid ? <BadgeCheck className="h-14 w-14 shrink-0 text-success" /> : <ShieldX className="h-14 w-14 shrink-0 text-destructive" />}
-          <div className="min-w-0 flex-1">
-            <div className={`text-xs font-bold uppercase tracking-widest ${valid ? "text-success" : "text-destructive"}`}>{valid ? "Terverifikasi asli" : "SK sudah dicabut"}</div>
-            <h1 className="mt-1 text-2xl font-black uppercase md:text-3xl">{valid ? "SK Resmi DPD ARMI Jawa Barat" : "SK Ini Tidak Berlaku Lagi"}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {valid ? "Surat Keputusan ini tercatat resmi di sistem DPD ARMI Jawa Barat. Isi di bawah adalah salinan asli yang tersimpan."
-                : "SK ini pernah diterbitkan DPD ARMI Jawa Barat namun telah dicabut dan tidak berlaku."}
-            </p>
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-5 md:py-12">
+        <div className={`overflow-hidden rounded-2xl border bg-card ${valid ? "border-success/40" : "border-destructive/40"}`}>
+          <div className={`relative px-5 pb-6 pt-7 text-center sm:px-8 md:flex md:items-center md:gap-6 md:text-left ${valid ? "bg-success/10" : "bg-destructive/10"}`}>
+            <div className={`mx-auto grid h-16 w-16 shrink-0 place-items-center rounded-full border-2 bg-background md:mx-0 md:h-20 md:w-20 ${valid ? "border-success/60" : "border-destructive/60"}`}>
+              {valid ? <BadgeCheck className={`h-9 w-9 md:h-11 md:w-11 ${tone}`} /> : <ShieldX className={`h-9 w-9 md:h-11 md:w-11 ${tone}`} />}
+            </div>
+            <div className="mt-4 min-w-0 flex-1 md:mt-0">
+              <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${valid ? "border-success/40 text-success" : "border-destructive/40 text-destructive"}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${valid ? "bg-success" : "bg-destructive"}`} />
+                {valid ? "Terverifikasi asli" : "SK sudah dicabut"}
+              </span>
+              <h1 className="mt-3 text-[1.6rem] font-black uppercase leading-[1.05] sm:text-3xl md:text-4xl">
+                {valid ? <>SK Resmi <span className="block sm:inline">DPD ARMI Jawa Barat</span></> : "SK Ini Tidak Berlaku Lagi"}
+              </h1>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:mx-0">
+                {valid ? "Surat Keputusan ini tercatat resmi di sistem DPD ARMI Jawa Barat. Dokumen di bawah adalah salinan asli yang tersimpan."
+                  : "SK ini pernah diterbitkan DPD ARMI Jawa Barat namun telah dicabut dan tidak berlaku."}
+              </p>
+            </div>
           </div>
-          <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-bold hover:border-primary">
-            <Printer className="h-4 w-4" /> Cetak / PDF
-          </button>
+
+          <dl className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4">
+            {details.map(([k, v, wide]) => (
+              <div key={k} className={`min-w-0 bg-card px-5 py-4 ${wide ? "col-span-2 lg:col-span-1" : ""} ${k === "Jabatan" ? "col-span-2 sm:col-span-1" : ""}`}>
+                <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{k}</dt>
+                <dd className={`mt-1 break-words text-sm font-semibold ${wide ? "font-mono" : ""}`}>{v}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-center text-xs text-muted-foreground sm:text-left">Diterbitkan oleh <span className="font-semibold text-foreground">DPD ARMI Jawa Barat</span> · dpdarmijabar.com</p>
+            <button onClick={() => window.print()} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary-dark sm:w-auto sm:py-2.5">
+              <Printer className="h-4 w-4" /> Cetak / Simpan PDF
+            </button>
+          </div>
         </div>
-        <dl className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 text-sm sm:grid-cols-2 lg:grid-cols-4">
-          {[["Nomor SK", sk.nomor], ["Nama", sk.nama_penerima], ["Jabatan", sk.jabatan], ["Tanggal Ditetapkan", formatTanggal(sk.tanggal_ditetapkan)]].map(([k, v]) => (
-            <div key={k}><dt className="text-xs uppercase tracking-wider text-muted-foreground">{k}</dt><dd className="mt-0.5 font-semibold break-words">{v}</dd></div>
-          ))}
-        </dl>
-        <div className="mx-auto mt-8 max-w-[210mm]">
+
+        <div className="mx-auto mt-10 max-w-[210mm]">
+          <div className="mb-3 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />Salinan Dokumen Resmi<span className="h-px flex-1 bg-border" />
+          </div>
           <SkScaler><SkDocument sk={sk} qr={qr} /></SkScaler>
         </div>
       </section>
