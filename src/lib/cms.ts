@@ -3,7 +3,15 @@ import type { Database } from "@/integrations/supabase/types";
 import { getHalaman, listArtikel, getArtikel, listGaleri } from "./cms.functions";
 
 export type HalamanRow = Database["public"]["Tables"]["halaman"]["Row"];
-export type Section = { judul: string; isi: string; gambar?: string };
+export type Section = { judul: string; isi: string; gambar?: string; label?: string; sub?: string };
+
+/** Beranda uses fixed konten slots: 0 = section "Bukan Sekadar Jaringan Usaha" (foto), 1 = section "Jaringan Kita". */
+export const BERANDA_JARINGAN: Section = {
+  label: "Jaringan Kita",
+  judul: "Di Seluruh\n*Jawa Barat*",
+  sub: "27 kabupaten/kota, satu tujuan",
+  isi: "Temukan anggota ARMI berdasarkan wilayah dan kenali jaringan usaha rental mobil di Jawa Barat.",
+};
 
 export type Halaman = {
   slug: string; label: string;
@@ -20,7 +28,8 @@ const d = (slug: string, label: string, seo_title: string, seo_description: stri
 export const HALAMAN_DEFAULT: Record<string, Halaman> = {
   beranda: d("beranda", "Beranda", "ARMI DPD Jawa Barat — Satu Jaringan, Satu Semangat",
     "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas.",
-    "Wadah Resmi Pengusaha Rental Mobil Jawa Barat", "Satu Jaringan. *Satu Semangat.*\nTumbuh Bersama.", "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.", [], "Tidak dipakai di beranda"),
+    "Wadah Resmi Pengusaha Rental Mobil Jawa Barat", "Satu Jaringan. *Satu Semangat.*\nTumbuh Bersama.", "Ruang kolaborasi pengusaha rental mobil Jawa Barat untuk memperkuat jaringan, membangun kepercayaan, dan meningkatkan profesionalitas bersama.",
+    [{ judul: "Tentang Komunitas", isi: "", gambar: "" }, BERANDA_JARINGAN], "Slot tetap beranda"),
   tentang: d("tentang", "Tentang Kami", "Tentang Kami — ARMI DPD Jawa Barat", "Profil, visi, dan misi DPD Anggota Rental Mobil Indonesia Jawa Barat.",
     "Tentang Kami", "Mengenal ARMI DPD Jawa Barat", "Wadah resmi para pengusaha rental mobil di Jawa Barat, berlandaskan Tri Arutala — Kebersamaan, Keamanan, Professionalitas.",
     [
@@ -62,7 +71,10 @@ export function mergeHalaman(slug: string, row: HalamanRow | null): Halaman {
   const base = defaultHalaman(slug);
   if (!row) return base;
   const pick = (k: keyof HalamanRow & keyof Halaman) => ((row[k] as string | null)?.trim() ? (row[k] as string) : (base[k] as string));
-  const konten = Array.isArray(row.konten) && row.konten.length ? (row.konten as unknown as Section[]) : base.konten;
+  const stored = Array.isArray(row.konten) ? (row.konten as unknown as Section[]) : [];
+  const konten = slug === "beranda"
+    ? mergeSlots(base.konten, stored)
+    : stored.length ? stored : base.konten;
   return {
     ...base,
     seo_title: pick("seo_title"), seo_description: pick("seo_description"), og_image: pick("og_image"),
