@@ -154,6 +154,7 @@ function Index() {
     return m;
   }, [anggota]);
   const preview = anggota.filter((a) => a.status === "aktif").slice(0, 4);
+  const jaringan = { ...BERANDA_JARINGAN, ...h.konten[1] };
 
   const { data: galeri = [] } = useQuery(galeriQuery);
   const { data: artikel = [] } = useQuery(artikelListQuery);
