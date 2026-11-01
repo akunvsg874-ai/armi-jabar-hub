@@ -1,4 +1,10 @@
+/** Wilayah ARMI Jawa Barat: area DPC Bandung Raya + 27 kabupaten/kota. */
+export const WILAYAH_BANDUNG = [
+  "Bandung Selatan (Bansel)", "Bandung Timur (Batim)", "Bandung Barat", "Bandung Raya", "Bandung Utara",
+] as const;
+
 export const WILAYAH_JABAR = [
+  ...WILAYAH_BANDUNG,
   "Kabupaten Bandung", "Kabupaten Bandung Barat", "Kabupaten Bekasi", "Kabupaten Bogor",
   "Kabupaten Ciamis", "Kabupaten Cianjur", "Kabupaten Cirebon", "Kabupaten Garut",
   "Kabupaten Indramayu", "Kabupaten Karawang", "Kabupaten Kuningan", "Kabupaten Majalengka",

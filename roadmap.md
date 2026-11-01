@@ -1,2 +1,4 @@
 - [x] Hero beranda: logo ARMI & DPD berdampingan sebagai latar belakang, ukuran besar dan berjarak
 - [x] Generate SK anggota sesuai template + QR Code verifikasi (admin Generate SK, halaman /verifikasi-sk)
+- [x] Tambah 5 wilayah Bandung (Bansel, Batim, Bandung Barat, Bandung Raya, Bandung Utara)
+- [x] Section 06 "Jaringan Kita" di beranda bisa diubah dari Kelola Halaman

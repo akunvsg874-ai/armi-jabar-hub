@@ -27,7 +27,11 @@ describe("aturan ARMI", () => {
     expect(formatRupiah(1000000)).toBe("Rp 1.000.000");
     expect(nomorToEmail("ARMI-JBR-0001")).toBe("armi-jbr-0001@armi.local");
   });
-  it("27 wilayah Jawa Barat", () => {
-    expect(WILAYAH_JABAR).toHaveLength(27);
+  it("27 kabupaten/kota + 5 wilayah Bandung", () => {
+    expect(WILAYAH_JABAR).toHaveLength(32);
+    for (const w of ["Bandung Selatan (Bansel)", "Bandung Timur (Batim)", "Bandung Barat", "Bandung Raya", "Bandung Utara"]) {
+      expect(WILAYAH_JABAR).toContain(w);
+    }
+    expect(WILAYAH_JABAR).toContain("Kabupaten Bandung Barat");
   });
 });

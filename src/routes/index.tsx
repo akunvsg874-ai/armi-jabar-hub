@@ -10,7 +10,7 @@ import { JenisBadge, StatusBadge } from "@/components/site/shared";
 import { kegiatanQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { WILAYAH_JABAR, todayISO } from "@/lib/armi";
-import { halamanQuery, seoMeta, galeriQuery, artikelListQuery } from "@/lib/cms";
+import { halamanQuery, seoMeta, galeriQuery, artikelListQuery, BERANDA_JARINGAN } from "@/lib/cms";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import heroImg from "@/assets/hero-cars.jpg";
 import convoyImg from "@/assets/convoy.jpg";
@@ -154,6 +154,7 @@ function Index() {
     return m;
   }, [anggota]);
   const preview = anggota.filter((a) => a.status === "aktif").slice(0, 4);
+  const jaringan = { ...BERANDA_JARINGAN, ...h.konten[1] };
 
   const { data: galeri = [] } = useQuery(galeriQuery);
   const { data: artikel = [] } = useQuery(artikelListQuery);
@@ -195,7 +196,7 @@ function Index() {
         <div className="relative border-y border-border bg-card/60 backdrop-blur">
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-5 py-10 md:grid-cols-4">
             {[
-              [MapPin, "27", "Kabupaten / Kota"],
+              [MapPin, String(WILAYAH_JABAR.length), "Wilayah Jawa Barat"],
               [Users, String(anggota.filter((a) => a.status === "aktif").length), "Anggota Aktif"],
               [Network, String(kegiatan.length), "Kegiatan Tercatat"],
               [Shield, "3", "Nilai Tri Arutala"],
@@ -343,16 +344,16 @@ function Index() {
       <section className="border-y border-border bg-ivory text-ink">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 md:py-28 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <Label light n="06">Jaringan Kita</Label>
-            <h2 className={H2}>Di Seluruh<br /><span className="text-primary">Jawa Barat</span></h2>
-            <p className="mt-3 -rotate-2 font-script text-2xl">27 kabupaten/kota, satu tujuan</p>
-            <p className="mt-5 max-w-md text-ink-muted">Temukan anggota ARMI berdasarkan wilayah dan kenali jaringan usaha rental mobil di Jawa Barat.</p>
+            <Label light n="06">{jaringan.label || BERANDA_JARINGAN.label!}</Label>
+            <h2 className={H2}><HeroTitle text={jaringan.judul} /></h2>
+            {jaringan.sub && <p className="mt-3 -rotate-2 font-script text-2xl">{jaringan.sub}</p>}
+            <p className="mt-5 max-w-md whitespace-pre-line text-ink-muted">{jaringan.isi}</p>
             <Link to="/anggota" className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary-dark">
               <Search className="h-4 w-4" /> Cari Anggota
             </Link>
           </div>
           <div className="rounded-md border border-ink/10 p-6">
-            <div className="mb-4 flex justify-between text-xs font-bold uppercase tracking-widest text-ink-muted"><span>27 Kabupaten / Kota</span><span>Anggota aktif</span></div>
+            <div className="mb-4 flex justify-between text-xs font-bold uppercase tracking-widest text-ink-muted"><span>{WILAYAH_JABAR.length} Wilayah</span><span>Anggota aktif</span></div>
             <ul className="grid gap-x-6 sm:grid-cols-2">
               {WILAYAH_JABAR.map((w) => (
                 <li key={w} className="flex justify-between border-b border-ink/10 py-2 text-sm">

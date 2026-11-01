@@ -30,11 +30,21 @@ function Page() {
   const setSec = (i: number, p: Partial<Section>) => setF({ ...f, konten: f.konten.map((s, j) => (j === i ? { ...s, ...p } : s)) });
   const move = (i: number, d: number) => { const k = [...f.konten]; const j = i + d; if (j < 0 || j >= k.length) return; const a = k[i]!; k[i] = k[j]!; k[j] = a; setF({ ...f, konten: k }); };
 
+  const setSlot = (i: number, p: Partial<Section>) => {
+    const k = [...f.konten];
+    while (k.length <= i) k.push({ judul: "", isi: "" });
+    k[i] = { ...k[i]!, ...p };
+    setF({ ...f, konten: k });
+  };
+  const jar = f.konten[1] ?? { judul: "", isi: "" };
+
   async function save() {
+    // Beranda konten are fixed slots (index = section), so keep positions intact.
+    const konten = slug === "beranda" ? f.konten : f.konten.filter((s) => s.judul.trim() || s.isi.trim() || (s.gambar ?? "").trim());
     const { error } = await supabase.from("halaman").upsert({
       slug, seo_title: f.seo_title, seo_description: f.seo_description, og_image: f.og_image,
       hero_eyebrow: f.hero_eyebrow, hero_title: f.hero_title, hero_desc: f.hero_desc, hero_image: f.hero_image,
-      konten: f.konten.filter((s) => s.judul.trim() || s.isi.trim() || (s.gambar ?? "").trim()) as unknown as Json, updated_at: new Date().toISOString(),
+      konten: konten as unknown as Json, updated_at: new Date().toISOString(),
     });
     if (error) return void toast.error("Gagal menyimpan");
     toast.success("Halaman tersimpan");
@@ -58,13 +68,8 @@ function Page() {
           <Field label={slug === "beranda" ? "Judul (Enter = baris baru, *teks* = warna oranye)" : "Judul"}>{slug === "beranda" ? <textarea rows={3} className={inputCls} value={f.hero_title} onChange={txt("hero_title")} maxLength={160} /> : <input className={inputCls} value={f.hero_title} onChange={txt("hero_title")} maxLength={160} />}</Field>
           <Field label="Deskripsi"><textarea className={inputCls} rows={3} value={f.hero_desc} onChange={txt("hero_desc")} maxLength={600} /></Field>
           {slug !== "anggota" && <Field label="Foto latar"><ImageInput value={f.hero_image} onChange={set("hero_image")} /></Field>}
-          {slug === "beranda" && <Field label={`Foto section "${f.konten[0]?.judul?.trim() || "Bukan Sekadar Jaringan Usaha"}"`}>
-            <ImageInput value={f.konten[0]?.gambar ?? ""} onChange={(v) => {
-              const k = [...f.konten];
-              if (k[0]) k[0] = { ...k[0], gambar: v };
-              else k[0] = { judul: "Tentang Komunitas", isi: "", gambar: v };
-              setF({ ...f, konten: k });
-            }} />
+          {slug === "beranda" && <Field label={`Foto section "Bukan Sekadar Jaringan Usaha"`}>
+            <ImageInput value={f.konten[0]?.gambar ?? ""} onChange={(v) => setSlot(0, { judul: f.konten[0]?.judul || "Tentang Komunitas", gambar: v })} />
           </Field>}
         </div>
         <div className="space-y-3 rounded-lg border border-border bg-card p-5">
@@ -74,6 +79,20 @@ function Page() {
           <Field label="Gambar saat dibagikan (media sosial)"><ImageInput value={f.og_image} onChange={set("og_image")} /></Field>
         </div>
       </div>
+      {slug === "beranda" && (
+        <div className="mt-6 space-y-3 rounded-lg border border-border bg-card p-5">
+          <div>
+            <h2 className="font-bold uppercase tracking-wider">Section 06 — Jaringan Kita</h2>
+            <p className="text-xs text-muted-foreground">Section daftar wilayah di halaman utama. Kosongkan kolom untuk memakai tulisan bawaan.</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Label kecil"><input className={inputCls} value={jar.label ?? ""} onChange={(e) => setSlot(1, { label: e.target.value })} maxLength={60} /></Field>
+            <Field label="Tulisan miring (di bawah judul)"><input className={inputCls} value={jar.sub ?? ""} onChange={(e) => setSlot(1, { sub: e.target.value })} maxLength={120} /></Field>
+          </div>
+          <Field label="Judul (Enter = baris baru, *teks* = warna oranye)"><textarea rows={2} className={inputCls} value={jar.judul} onChange={(e) => setSlot(1, { judul: e.target.value })} maxLength={120} /></Field>
+          <Field label="Deskripsi"><textarea rows={3} className={inputCls} value={jar.isi} onChange={(e) => setSlot(1, { isi: e.target.value })} maxLength={600} /></Field>
+        </div>
+      )}
       {slug !== "beranda" && (
         <div className="mt-6 space-y-3 rounded-lg border border-border bg-card p-5">
           <div className="flex items-center justify-between">
