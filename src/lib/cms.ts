@@ -67,6 +67,21 @@ export const HALAMAN_DEFAULT: Record<string, Halaman> = {
 export const defaultHalaman = (slug: string): Halaman => HALAMAN_DEFAULT[slug] ?? { ...HALAMAN_DEFAULT["beranda"]!, slug, label: slug };
 export const SLUGS = Object.keys(HALAMAN_DEFAULT);
 
+/** Fixed-slot konten: each slot keeps its position; empty stored fields fall back to the default slot. */
+export function mergeSlots(base: Section[], stored: Section[]): Section[] {
+  const len = Math.max(base.length, stored.length);
+  return Array.from({ length: len }, (_, i) => {
+    const b = base[i] ?? { judul: "", isi: "" };
+    const s = stored[i] ?? ({} as Partial<Section>);
+    const out: Section = { ...b };
+    (Object.keys(s) as (keyof Section)[]).forEach((k) => {
+      const v = s[k];
+      if (typeof v === "string" && v.trim()) out[k] = v;
+    });
+    return out;
+  });
+}
+
 export function mergeHalaman(slug: string, row: HalamanRow | null): Halaman {
   const base = defaultHalaman(slug);
   if (!row) return base;
