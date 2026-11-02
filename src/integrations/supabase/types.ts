@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       anggota: {
         Row: {
+          alamat: string | null
           created_at: string
           garasi_path: string | null
           id: string
@@ -34,6 +35,7 @@ export type Database = {
           wilayah: string
         }
         Insert: {
+          alamat?: string | null
           created_at?: string
           garasi_path?: string | null
           id?: string
@@ -52,6 +54,7 @@ export type Database = {
           wilayah: string
         }
         Update: {
+          alamat?: string | null
           created_at?: string
           garasi_path?: string | null
           id?: string
