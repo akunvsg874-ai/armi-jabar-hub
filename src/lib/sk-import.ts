@@ -1,25 +1,10 @@
 import type { SkData } from "./sk";
 
-/** Fields an SK notepad (.txt) file can fill; anything missing keeps the form default. */
+/** Fields read from an SK typed in notepad; anything missing keeps the form default. */
 export type SkImport = Partial<Pick<SkData, "nomor" | "nama_penerima" | "jabatan" | "tingkat" | "tentang" | "menimbang" | "mengingat" | "diktum_lain"
   | "ditetapkan_di" | "tanggal_ditetapkan" | "jabatan_penandatangan" | "nama_penandatangan">>;
-type Key = keyof SkImport | "nomor_anggota";
 
-const KEYS: Record<string, Key> = {
-  nomor: "nomor", nomorsk: "nomor", nosk: "nomor", nomorsurat: "nomor",
-  nama: "nama_penerima", namapenerima: "nama_penerima", penerima: "nama_penerima",
-  jabatan: "jabatan", tingkat: "tingkat", ditingkat: "tingkat",
-  tentang: "tentang", menimbang: "menimbang", mengingat: "mengingat",
-  diktum: "diktum_lain", diktumlain: "diktum_lain", memutuskan: "diktum_lain", menetapkan: "diktum_lain",
-  ditetapkandi: "ditetapkan_di", tempat: "ditetapkan_di",
-  tanggal: "tanggal_ditetapkan", padatanggal: "tanggal_ditetapkan", tanggalditetapkan: "tanggal_ditetapkan",
-  jabatanpenandatangan: "jabatan_penandatangan", namapenandatangan: "nama_penandatangan", penandatangan: "nama_penandatangan",
-  nomoranggota: "nomor_anggota", noanggota: "nomor_anggota",
-};
-const LIST_KEYS = new Set<Key>(["menimbang", "mengingat", "diktum_lain"]);
-const BULLET = /^(?:[-*•]|[a-zA-Z0-9]{1,2}[.)])\s+(.*)$/;
 const BULAN = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
-
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Accepts 2026-11-02, 02-11-2026, 02/11/2026 or "2 November 2026"; returns YYYY-MM-DD or null. */
@@ -37,76 +22,93 @@ export function parseTanggal(s: string): string | null {
   return null;
 }
 
-/** Parses "Label: isi" lines; Menimbang/Mengingat/Diktum take one bullet ("- ", "a.", "1.") per point. */
-export function parseSkText(text: string): { data: SkImport; nomorAnggota: string; unknown: string[]; badDate: string } {
-  const data: SkImport = {};
-  const scalars: Partial<Record<Key, string[]>> = {};
-  const lists: Partial<Record<Key, string[]>> = {};
-  const unknown: string[] = [];
-  let cur: Key | null = null;
+const HEADER = /^SURAT\s+KEPUTUSAN\s+KETUA\s+ARMI/i;
+const DIKTUM = /^(Pertama|Kedua|Ketiga|Keempat|Kelima|Keenam|Ketujuh|Kedelapan|Kesembilan|Kesepuluh)\s*:\s*(.*)$/i;
+const LETTER = /^[a-z][.)]\s+(.*)$/i;
+const PERTAMA = /Mengangkat\s+(?:Sdr\.?|Sdri\.?|Saudara|Saudari)?\s*(.+?)\s+sebagai\s+(.+?)(?:\s+ARMI)?\s+di\s+tingkat\s+(.+?)\.?$/i;
 
-  for (const raw of text.replace(/^\uFEFF/, "").split(/\r?\n/)) {
-    const line = raw.trim();
-    if (!line || line.startsWith("#")) continue;
-    const km = line.match(/^([A-Za-z][A-Za-z .\/]{0,40}?)\s*[:=]\s*(.*)$/);
-    const key = km ? KEYS[km[1]!.toLowerCase().replace(/[^a-z]/g, "")] : undefined;
-    if (km && key) {
-      cur = key;
-      const rest = km[2]!.trim();
-      if (LIST_KEYS.has(key)) { lists[key] = []; if (rest) lists[key]!.push(rest.match(BULLET)?.[1] ?? rest); }
-      else scalars[key] = rest ? [rest] : [];
+/** Parses one block written like the printed SK (Nomor :, TENTANG, Menimbang : a., Pertama :, Pada Tanggal :, signer). */
+function parseBlock(lines: string[]): SkImport {
+  const d: SkImport = {};
+  const tentang: string[] = [];
+  const lists = { menimbang: [] as string[], mengingat: [] as string[], diktum: [] as string[] };
+  let pertama = "";
+  let mode: "" | "tentang" | "menimbang" | "mengingat" | "pertama" | "diktum" | "ttd" = "";
+  const ttd: string[] = [];
+  const push = (arr: string[], s: string, newItem: boolean) => {
+    if (newItem || !arr.length) arr.push(s); else arr[arr.length - 1] += " " + s;
+  };
+
+  for (const line of lines) {
+    let m: RegExpMatchArray | null;
+    if (/^DEWAN PIMPINAN DAERAH/i.test(line) && mode === "") continue;
+    if ((m = line.match(/^Nomor\s*:\s*(.+)$/i))) { d.nomor = m[1]!.trim(); mode = ""; continue; }
+    if ((m = line.match(/^TENTANG\b\s*:?\s*(.*)$/i))) { mode = "tentang"; if (m[1]) tentang.push(m[1].trim()); continue; }
+    if (/^KETUA\s+ARMI\s+DPD/i.test(line) && mode === "tentang") { mode = ""; continue; }
+    if ((m = line.match(/^(Menimbang|Mengingat)\s*:\s*(.*)$/i))) {
+      mode = m[1]!.toLowerCase() as "menimbang" | "mengingat";
+      const rest = m[2]!.trim();
+      if (rest) push(lists[mode], rest.match(LETTER)?.[1] ?? rest, true);
       continue;
     }
-    if (!cur) { if (km) unknown.push(km[1]!.trim()); continue; }
-    if (LIST_KEYS.has(cur)) {
-      const items = lists[cur]!;
-      const b = line.match(BULLET);
-      if (b || !items.length) items.push(b ? b[1]! : line);
-      else items[items.length - 1] += " " + line;
-    } else scalars[cur]!.push(line);
+    if (/^(MEMUTUSKAN|Menetapkan\s*:?)$/i.test(line)) { mode = ""; continue; }
+    if ((m = line.match(DIKTUM))) {
+      if (m[1]!.toLowerCase() === "pertama") { mode = "pertama"; pertama = m[2]!.trim(); }
+      else { mode = "diktum"; push(lists.diktum, m[2]!.trim(), true); }
+      continue;
+    }
+    if ((m = line.match(/^Ditetapkan\s+di\s*:\s*(.+)$/i))) { d.ditetapkan_di = m[1]!.trim(); mode = ""; continue; }
+    if ((m = line.match(/^Pada\s+Tangg?al?\w*\s*:\s*(.+)$/i))) {
+      const t = parseTanggal(m[1]!); if (t) d.tanggal_ditetapkan = t;
+      mode = "ttd"; continue;
+    }
+    if (mode === "tentang") tentang.push(line);
+    else if (mode === "menimbang" || mode === "mengingat") { const b = line.match(LETTER); push(lists[mode], b ? b[1]! : line, !!b); }
+    else if (mode === "pertama") pertama += " " + line;
+    else if (mode === "diktum") push(lists.diktum, line, false);
+    else if (mode === "ttd" && !/^\(.*\)$/.test(line)) ttd.push(line);
   }
 
-  let badDate = "";
-  for (const [k, v] of Object.entries(scalars) as [Key, string[]][]) {
-    if (k === "nomor_anggota" || !v.length) continue;
-    const val = k === "tentang" ? v.join("\n") : v.join(" ");
-    if (k === "tanggal_ditetapkan") { const d = parseTanggal(val); if (d) data.tanggal_ditetapkan = d; else badDate = val; }
-    else (data as Record<string, string>)[k] = val;
-  }
-  for (const [k, v] of Object.entries(lists) as [Key, string[]][]) {
-    const items = v.map((x) => x.trim()).filter(Boolean);
-    if (items.length) (data as Record<string, string[]>)[k] = items;
-  }
-  return { data, nomorAnggota: (scalars.nomor_anggota ?? []).join(" ").trim(), unknown, badDate };
+  if (tentang.length) d.tentang = tentang.join("\n").toUpperCase();
+  if (lists.menimbang.length) d.menimbang = lists.menimbang;
+  if (lists.mengingat.length) d.mengingat = lists.mengingat;
+  if (lists.diktum.length) d.diktum_lain = lists.diktum;
+  const p = pertama.replace(/\s+/g, " ").trim().match(PERTAMA);
+  if (p) { d.nama_penerima = p[1]!.trim(); d.jabatan = p[2]!.trim(); d.tingkat = p[3]!.trim(); }
+  if (ttd.length >= 2) { d.jabatan_penandatangan = ttd[0]; d.nama_penandatangan = ttd[ttd.length - 1]; }
+  else if (ttd.length === 1) d.nama_penandatangan = ttd[0];
+  return d;
 }
 
-export const SK_TXT_CONTOH = `# Contoh file SK untuk diimpor ke Generate SK.
-# Format: Label: isi. Baris diawali # diabaikan. Kolom yang tidak ditulis memakai isi bawaan.
-# Nomor SK boleh dikosongkan, nanti diisi nomor urut berikutnya.
+/** Splits a notepad text into SKs (each starts with "SURAT KEPUTUSAN KETUA ARMI") and parses each one. */
+export function parseSkText(text: string): SkImport[] {
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).map((l) => l.replace(/\s+/g, " ").trim()).filter(Boolean);
+  const blocks: string[][] = [];
+  for (const l of lines) {
+    if (HEADER.test(l) || !blocks.length) blocks.push([]);
+    if (!HEADER.test(l)) blocks[blocks.length - 1]!.push(l);
+  }
+  return blocks.map(parseBlock).filter((d) => d.nama_penerima || d.nomor);
+}
 
-Nomor SK:
-Nomor Anggota: 05.2024.06.06.0122
-Nama Penerima: IKHSAN NURDIEN, S.T
-Jabatan: Koordinator Keanggotaan
-Tingkat: Dewan Pimpinan Daerah Jawa Barat
-Tentang:
-PENGANGKATAN KOORDINATOR KEANGGOTAAN
+export const SK_TXT_CONTOH = `SURAT KEPUTUSAN KETUA ARMI
 DEWAN PIMPINAN DAERAH JAWA BARAT
-
-Menimbang:
-a. Bahwa untuk mengisi kekosongan pemangku jabatan Koordinator Keanggotaan di tingkat Dewan Pimpinan Daerah Jawa Barat maka diperlukan penunjukan secepatnya
+Nomor : 41736/XVII/ARMI-DPD/X/2026
+TENTANG PENGANGKATAN KOORDINATOR KEANGGOTAAN
+DEWAN PIMPINAN DAERAH JAWA BARAT
+KETUA ARMI DPD JAWA BARAT
+Menimbang : a. Bahwa untuk mengisi kekosongan pemangku jabatan Koordinator Keanggotaan di tingkat Dewan Pimpinan Daerah Jawa Barat maka diperlukan penunjukan secepatnya
 b. Bahwa perlu ditetapkannya dengan keputusan Ketua ARMI DPD Jawa Barat
-
-Mengingat:
-a. Anggaran Dasar ARMI BAB VI Pasal 1 tentang Struktur Organisasi
+Mengingat : a. Anggaran Dasar ARMI BAB VI Pasal 1 tentang Struktur Organisasi
 b. Anggaran Rumah Tangga ARMI BAB V Pasal 3 Tentang Susunan Pimpinan Cabang
-
-# Diktum Pertama dibuat otomatis. Tulis mulai diktum Kedua.
-Diktum:
-- Keputusan ini berlaku pada tanggal ditetapkan dan apabila dikemudian hari terdapat kekeliruan akan dilakukan perbaikan sebagaimana mestinya
-
-Ditetapkan di: Kota Tasikmalaya, Jawa Barat
-Tanggal: 2 November 2026
-Jabatan Penandatangan: plt. Ketua DPD ARMI Jawa Barat
-Nama Penandatangan: Ikhsan Sonia Fadly, S.sos
+c. Kewenangan penuh berdasarkan Surat Penunjukan Antar Waktu Ketua Harian DPD Jawa Barat No. 01/022092026/dpdjabar
+MEMUTUSKAN
+Menetapkan :
+Pertama : Mengangkat Sdr. IKHSAN NURDIEN, S.T sebagai Koordinator Keanggotaan ARMI di tingkat Dewan Pimpinan Daerah Jawa Barat
+Kedua : Keputusan ini berlaku pada tanggal ditetapkan dan apabila dikemudian hari terdapat kekeliruan akan dilakukan perbaikan sebagaimana mestinya
+Ditetapkan di : Kota Tasikmalaya, Jawa Barat
+Pada Tanggal : 17 Oktober 2026
+plt. Ketua DPD ARMI Jawa Barat
+(ditandatangani secara elektronik)
+Ikhsan Sonia Fadly, S.sos
 `;
