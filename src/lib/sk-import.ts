@@ -75,8 +75,8 @@ function parseBlock(lines: string[]): SkImport {
   if (lists.diktum.length) d.diktum_lain = lists.diktum;
   const p = pertama.replace(/\s+/g, " ").trim().match(PERTAMA);
   if (p) { d.nama_penerima = p[1]!.trim(); d.jabatan = p[2]!.trim(); d.tingkat = p[3]!.trim(); }
-  if (ttd.length >= 2) { d.jabatan_penandatangan = ttd[0]; d.nama_penandatangan = ttd[ttd.length - 1]; }
-  else if (ttd.length === 1) d.nama_penandatangan = ttd[0];
+  if (ttd.length >= 2) { d.jabatan_penandatangan = ttd[0]!; d.nama_penandatangan = ttd[ttd.length - 1]!; }
+  else if (ttd.length === 1) d.nama_penandatangan = ttd[0]!;
   return d;
 }
 
