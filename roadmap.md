@@ -2,3 +2,4 @@
 - [x] Generate SK anggota sesuai template + QR Code verifikasi (admin Generate SK, halaman /verifikasi-sk)
 - [x] Tambah 5 wilayah Bandung (Bansel, Batim, Bandung Barat, Bandung Raya, Bandung Utara)
 - [x] Section 06 "Jaringan Kita" di beranda bisa diubah dari Kelola Halaman
+- [x] Impor SK dari file notepad (tombol "Impor dari Notepad" di Generate SK) + 6 SK dari file abang dimasukkan
