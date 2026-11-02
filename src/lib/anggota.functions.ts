@@ -10,6 +10,7 @@ const base = z.object({
   ktp_path: z.string().max(300).nullable().default(null),
   garasi_path: z.string().max(300).nullable().default(null),
   maps_url: z.string().trim().max(500).refine((v) => !v || /^https?:\/\//.test(v), "Link Google Maps tidak valid").nullable().default(null),
+  alamat: z.string().trim().max(500).nullable().default(null),
   nib: z.string().trim().max(40).nullable().default(null),
   unit: z.array(z.string().trim().min(1).max(120)).max(500).default([]),
   wilayah: z.enum(WILAYAH_JABAR),

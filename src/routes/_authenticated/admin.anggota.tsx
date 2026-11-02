@@ -20,11 +20,11 @@ export const Route = createFileRoute("/_authenticated/admin/anggota")({
 });
 
 type Form = {
-  nama_lengkap: string; no_anggota: string; wilayah: string; nama_usaha: string; maps_url: string; nib: string;
+  nama_lengkap: string; no_anggota: string; wilayah: string; nama_usaha: string; alamat: string; maps_url: string; nib: string;
   ktp_path: string | null; garasi_path: string | null; unit: string[];
   status: "aktif" | "non_aktif"; role: "admin" | "bendahara" | "anggota";
 };
-const empty: Form = { nama_lengkap: "", no_anggota: "", wilayah: "Kota Bandung", nama_usaha: "", maps_url: "", nib: "", ktp_path: null, garasi_path: null, unit: [""], status: "aktif", role: "anggota" };
+const empty: Form = { nama_lengkap: "", no_anggota: "", wilayah: "Kota Bandung", nama_usaha: "", alamat: "", maps_url: "", nib: "", ktp_path: null, garasi_path: null, unit: [""], status: "aktif", role: "anggota" };
 
 /** Uploads a private document (KTP / garage photo); only admins can view it via short-lived links. */
 function DocUpload({ label, value, onChange, prefix }: { label: string; value: string | null; onChange: (p: string | null) => void; prefix: string }) {
@@ -84,9 +84,9 @@ function Page() {
   }
   function openEdit(a: Me) {
     setEditing(a); setPreview(a.nomor_anggota);
-    const r = a as Me & { no_anggota: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
+    const r = a as Me & { no_anggota: string | null; alamat: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
     const unit = Array.isArray(r.unit) ? (r.unit as string[]) : [];
-    setForm({ nama_lengkap: a.nama_lengkap, no_anggota: r.no_anggota ?? "", wilayah: a.wilayah, nama_usaha: a.nama_usaha, maps_url: r.maps_url ?? "", nib: r.nib ?? "",
+    setForm({ nama_lengkap: a.nama_lengkap, no_anggota: r.no_anggota ?? "", wilayah: a.wilayah, nama_usaha: a.nama_usaha, alamat: r.alamat ?? "", maps_url: r.maps_url ?? "", nib: r.nib ?? "",
       ktp_path: r.ktp_path, garasi_path: r.garasi_path, unit: unit.length ? unit : [""], status: a.status, role: a.role });
     setOpen(true);
   }
@@ -94,7 +94,7 @@ function Page() {
     e.preventDefault();
     if (!form.nama_lengkap.trim() || !form.nama_usaha.trim()) return void toast.error("Nama lengkap dan nama garasi wajib diisi");
     if (form.maps_url && !/^https?:\/\//.test(form.maps_url.trim())) return void toast.error("Link Google Maps harus diawali https://");
-    const payload = { ...form, no_anggota: form.no_anggota.trim() || null, maps_url: form.maps_url.trim() || null, nib: form.nib.trim() || null,
+    const payload = { ...form, no_anggota: form.no_anggota.trim() || null, alamat: form.alamat.trim() || null, maps_url: form.maps_url.trim() || null, nib: form.nib.trim() || null,
       unit: form.unit.map((u) => u.trim()).filter(Boolean), no_hp: preview.trim(), nomor_login: preview.trim() };
     if (!/^(\d{9,15}|ARMI-JBR-\d{4})$/.test(payload.nomor_login)) return void toast.error("Nomor HP login harus 9–15 angka, contoh 081234567890");
     setSaving(true);
@@ -105,7 +105,7 @@ function Page() {
     } catch (err) { toast.error((err as Error).message); } finally { setSaving(false); }
   }
 
-  const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+  const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
   const setUnit = (i: number, v: string) => setForm({ ...form, unit: form.unit.map((u, j) => (j === i ? v : u)) });
 
   return (
@@ -150,6 +150,7 @@ function Page() {
           <Field label="Nama Garasi"><input className={inputCls} value={form.nama_usaha} onChange={set("nama_usaha")} maxLength={100} placeholder="Yuz Rentcar" /></Field>
           <Field label="Foto Garasi Rental"><DocUpload label="Upload Garasi Rental" value={form.garasi_path} onChange={(p) => setForm({ ...form, garasi_path: p })} prefix="garasi" /></Field>
           <Field label="DPC"><select className={inputCls} value={form.wilayah} onChange={set("wilayah")}>{WILAYAH_JABAR.map((w) => <option key={w}>{w}</option>)}</select></Field>
+          <Field label="Alamat Lengkap Garasi"><textarea className={`${inputCls} min-h-20`} value={form.alamat} onChange={set("alamat")} maxLength={500} rows={3} placeholder="Jl. …, RT/RW, Desa/Kelurahan, Kecamatan, Kabupaten/Kota" /></Field>
           <Field label="Koordinat / Link Google Maps Garasi"><input className={inputCls} value={form.maps_url} onChange={set("maps_url")} maxLength={500} placeholder="https://maps.app.goo.gl/…" /></Field>
           <Field label="NIB (jika ada)"><input className={inputCls} value={form.nib} onChange={set("nib")} maxLength={40} /></Field>
           <Field label="Data Unit">
@@ -173,11 +174,12 @@ function Page() {
 
       <Modal open={!!viewing} onOpenChange={(o) => !o && setViewing(null)} title="Data Anggota">
         {viewing && (() => {
-          const r = viewing as Me & { no_anggota: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
+          const r = viewing as Me & { no_anggota: string | null; alamat: string | null; maps_url: string | null; nib: string | null; ktp_path: string | null; garasi_path: string | null; unit: unknown };
           const unit = Array.isArray(r.unit) ? (r.unit as string[]) : [];
           const open = async (p: string) => { const { data } = await supabase.storage.from("dokumen").createSignedUrl(p, 120); if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener"); };
           const rows: [string, React.ReactNode][] = [
             ["Nomor Login", r.nomor_anggota], ["Nama Lengkap", r.nama_lengkap], ["No. Anggota", r.no_anggota], ["Nama Garasi", r.nama_usaha], ["DPC", r.wilayah],
+            ["Alamat", r.alamat ? <span className="whitespace-pre-line">{r.alamat}</span> : null],
             ["Google Maps", r.maps_url ? <a className="text-primary underline" href={r.maps_url} target="_blank" rel="noopener noreferrer">Buka peta</a> : null],
             ["NIB", r.nib], ["Status", <StatusBadge status={r.status} />], ["Role", r.role.toUpperCase()],
             ["KTP / SIM", r.ktp_path ? <button className={btnSecondary} onClick={() => open(r.ktp_path!)}><Eye className="h-4 w-4" /> Lihat</button> : null],
