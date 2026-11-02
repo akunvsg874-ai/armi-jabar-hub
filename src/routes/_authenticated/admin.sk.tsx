@@ -1,12 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Plus, Pencil, Trash2, ExternalLink, Printer, Ban, RotateCcw, Wand2, X, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Printer, Ban, RotateCcw, Wand2, X, Copy, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { anggotaListQuery } from "@/lib/queries";
 import { formatTanggal } from "@/lib/armi";
 import { defaultSk, diktumLabel, diktumPertama, nextUrut, rowToSk, skVerifyUrl, suggestNomor, type SkData } from "@/lib/sk";
+import { parseSkText, SK_TXT_CONTOH, type SkImport } from "@/lib/sk-import";
 import { PageTitle, Table, td, Field, inputCls, btnPrimary, btnSecondary, btnDanger } from "@/components/portal/ui";
 import { ImageInput } from "@/components/portal/ImageInput";
 import { SkDocument, SkScaler, useSkQr } from "@/components/sk/SkDocument";
@@ -60,6 +61,40 @@ function Page() {
     setForm({ ...d, nomor: suggestNomor(nextUrut(list.map((s) => s.nomor)), d.tanggal_ditetapkan), status: "aktif", anggota_id: "" });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const matchAnggota = (nama = "") => anggota.find((a) => a.nama_lengkap.trim().length > 3 && ` ${norm(nama)} `.includes(` ${norm(a.nama_lengkap)} `))?.id ?? "";
+
+  async function importTxt(file: File) {
+    const items = parseSkText(await file.text());
+    if (!items.length) return void toast.error("Tidak ada SK yang terbaca. Pastikan tiap SK diawali “SURAT KEPUTUSAN KETUA ARMI”, lalu ada Nomor dan baris Pertama.");
+    let urut = nextUrut(list.map((s) => s.nomor));
+    const build = (it: SkImport): Form => {
+      const d = defaultSk(it.jabatan, it.tingkat);
+      const tanggal = it.tanggal_ditetapkan ?? d.tanggal_ditetapkan;
+      return { ...d, ...it, nomor: it.nomor ?? suggestNomor(urut++, tanggal), tanggal_ditetapkan: tanggal, status: "aktif", anggota_id: matchAnggota(it.nama_penerima) };
+    };
+    if (items.length === 1) {
+      setEditing(null); setForm(build(items[0]!));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return void toast.success("SK dari notepad dimuat. Periksa pratinjau, lalu klik Generate SK & QR Code.");
+    }
+    const uid = (await supabase.auth.getUser()).data.user?.id ?? null;
+    const existing = new Set(list.map((s) => s.nomor));
+    const rows = items.map(build).filter((f) => !existing.has(f.nomor)).map(({ anggota_id, ...f }) => ({ ...f, anggota_id: anggota_id || null, ttd_url: null, created_by: uid }));
+    const skipped = items.length - rows.length;
+    if (!rows.length) return void toast.error(`Semua ${items.length} SK di file ini sudah ada (nomornya sama).`);
+    const { error } = await supabase.from("surat_keputusan").insert(rows);
+    if (error) return void toast.error(error.code === "23505" ? "Ada nomor SK yang dipakai dua kali di file" : "Gagal menyimpan SK dari file");
+    toast.success(`${rows.length} SK berhasil dibuat dari notepad${skipped ? `, ${skipped} dilewati karena nomornya sudah ada` : ""}.`);
+    refresh();
+  }
+
+  function downloadContoh() {
+    const url = URL.createObjectURL(new Blob([SK_TXT_CONTOH], { type: "text/plain;charset=utf-8" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: "contoh-sk.txt" });
+    a.click(); URL.revokeObjectURL(url);
+  }
   function openEdit(r: SkRow) {
     const s = rowToSk(r);
     setEditing(r);
@@ -108,7 +143,16 @@ function Page() {
   return (
     <>
       <PageTitle title="Generate SK" desc="Buat Surat Keputusan resmi sesuai template DPD, lengkap dengan QR Code verifikasi keaslian."
-        action={!form && <button className={btnPrimary} onClick={openNew}><Plus className="h-4 w-4" /> Buat SK Baru</button>} />
+        action={
+          <div className="flex flex-wrap gap-2">
+            <label className={`${btnSecondary} cursor-pointer`} title="Ketik SK di notepad seperti SK cetak; satu file boleh berisi banyak SK">
+              <FileText className="h-4 w-4" /> Impor dari Notepad
+              <input type="file" accept=".txt,text/plain" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void importTxt(f); }} />
+            </label>
+            <button type="button" className={btnSecondary} onClick={downloadContoh}><Download className="h-4 w-4" /> Contoh file</button>
+            {!form && <button className={btnPrimary} onClick={openNew}><Plus className="h-4 w-4" /> Buat SK Baru</button>}
+          </div>
+        } />
 
       {form && (
         <div className="mb-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
